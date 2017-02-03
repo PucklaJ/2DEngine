@@ -111,11 +111,15 @@ namespace SDL
         
         SDL_SetRenderTarget(m_mainClass->getRenderer(),m_mainClass->getBackBuffer());
         
-        m_srcRect.x = 0;
-        m_srcRect.y = 0;
-        SDL_QueryTexture(m_texture->getTexture(),nullptr,nullptr,&m_srcRect.w,&m_srcRect.h);
+        if(m_texture)
+        {
+            m_srcRect.x = 0;
+            m_srcRect.y = 0;
+            SDL_QueryTexture(m_texture->getTexture(),nullptr,nullptr,&m_srcRect.w,&m_srcRect.h);
+            
+            m_size.set(m_texture->getWidth(),m_texture->getHeight());
+        }
         
-        m_size.set(m_texture->getWidth(),m_texture->getHeight());
         
         LogManager::log("Finished Loading Map!");
        

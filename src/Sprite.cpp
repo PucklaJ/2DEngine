@@ -131,7 +131,8 @@ namespace SDL
         if(m_texture)
         {
             SDL_QueryTexture(m_texture->getTexture(),nullptr,nullptr,&m_srcRect.w,&m_srcRect.h);
-            m_size = Vector2(m_srcRect.w,m_srcRect.h);        }
+            m_size = Vector2(m_srcRect.w,m_srcRect.h);
+        }
     }
 
     bool Sprite::init()
@@ -174,21 +175,25 @@ namespace SDL
         if(!m_renderChildrenAfter)
             Actor::m_render();
         
-        if(m_rotation == 0.0 || !((int)m_rotation % 360))
+        if(m_texture)
         {
-            if(m_texture->renderCopy(m_renderer,&m_dstRect,&m_srcRect)<0)
+            if(m_rotation == 0.0 || !((int)m_rotation % 360))
             {
-                LogManager::log(std::string("Render Error: ") + SDL_GetError());
+                if(m_texture->renderCopy(m_renderer,&m_dstRect,&m_srcRect)<0)
+                {
+                    LogManager::log(std::string("Render Error: ") + SDL_GetError());
+                }
+            
             }
-
-        }
-        else
-        {
-            if(m_texture->renderCopyEx(m_renderer,m_rotation,&m_dstRect,&m_srcRect)<0)
+            else
             {
-                LogManager::log(std::string("Render Error: ") + SDL_GetError());
+                if(m_texture->renderCopyEx(m_renderer,m_rotation,&m_dstRect,&m_srcRect)<0)
+                {
+                    LogManager::log(std::string("Render Error: ") + SDL_GetError());
+                }
             }
         }
+        
         
         if(m_renderChildrenAfter)
             Actor::m_render();
@@ -240,7 +245,8 @@ namespace SDL
     }
     
     bool Sprite::intersects(const Vector2& v)
-    {        if(m_position.getX() + m_size.getX() > v.getX() &&
+    {
+        if(m_position.getX() + m_size.getX() > v.getX() &&
            m_position.getX() < v.getX() &&
            m_position.getY() + m_size.getY() > v.getY() &&
            m_position.getY() < v.getY())
