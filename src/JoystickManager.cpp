@@ -48,7 +48,7 @@ namespace SDL
 
     bool equal(Uint8 u1[], Uint8 u2[])
     {
-        int size = sizeof(u1)/sizeof(*u1);
+        int size = sizeof((Uint8*)u1)/sizeof(*u1);
         for(int i = 0;i<size;i++)
         {
             if(u1[i] != u2[i])

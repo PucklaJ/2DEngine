@@ -155,7 +155,7 @@ int pixelRGBAWeight(SDL_Renderer * renderer, Sint16 x, Sint16 y, Uint8 r, Uint8 
 
 \returns Returns 0 on success, -1 on failure.
 */
-int hline(SDL_Renderer * renderer, Sint16 x1, Sint16 x2, Sint16 y)
+int horicontalline(SDL_Renderer * renderer, Sint16 x1, Sint16 x2, Sint16 y)
 {
 	return SDL_RenderDrawLine(renderer, x1, y, x2, y);;
 }
@@ -633,10 +633,10 @@ int roundedBoxRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2,
 			if (cy > 0) {
 				ypcy = y + cy;
 				ymcy = y - cy;
-				result |= hline(renderer, xmcx, xpcx + dx, ypcy + dy);
-				result |= hline(renderer, xmcx, xpcx + dx, ymcy);
+				result |= horicontalline(renderer, xmcx, xpcx + dx, ypcy + dy);
+				result |= horicontalline(renderer, xmcx, xpcx + dx, ymcy);
 			} else {
-				result |= hline(renderer, xmcx, xpcx + dx, y);
+				result |= horicontalline(renderer, xmcx, xpcx + dx, y);
 			}
 			ocy = cy;
 		}
@@ -645,10 +645,10 @@ int roundedBoxRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2,
 				if (cx > 0) {
 					ypcx = y + cx;
 					ymcx = y - cx;
-					result |= hline(renderer, xmcy, xpcy + dx, ymcx);
-					result |= hline(renderer, xmcy, xpcy + dx, ypcx + dy);
+					result |= horicontalline(renderer, xmcy, xpcy + dx, ymcx);
+					result |= horicontalline(renderer, xmcy, xpcy + dx, ypcx + dy);
 				} else {
-					result |= hline(renderer, xmcy, xpcy + dx, y);
+					result |= horicontalline(renderer, xmcy, xpcy + dx, y);
 				}
 			}
 			ocx = cx;
@@ -1523,10 +1523,10 @@ int filledCircleRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Ui
 			if (cy > 0) {
 				ypcy = y + cy;
 				ymcy = y - cy;
-				result |= hline(renderer, xmcx, xpcx, ypcy);
-				result |= hline(renderer, xmcx, xpcx, ymcy);
+				result |= horicontalline(renderer, xmcx, xpcx, ypcy);
+				result |= horicontalline(renderer, xmcx, xpcx, ymcy);
 			} else {
-				result |= hline(renderer, xmcx, xpcx, y);
+				result |= horicontalline(renderer, xmcx, xpcx, y);
 			}
 			ocy = cy;
 		}
@@ -1535,10 +1535,10 @@ int filledCircleRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Ui
 				if (cx > 0) {
 					ypcx = y + cx;
 					ymcx = y - cx;
-					result |= hline(renderer, xmcy, xpcy, ymcx);
-					result |= hline(renderer, xmcy, xpcy, ypcx);
+					result |= horicontalline(renderer, xmcy, xpcy, ymcx);
+					result |= horicontalline(renderer, xmcy, xpcy, ypcx);
 				} else {
-					result |= hline(renderer, xmcy, xpcy, y);
+					result |= horicontalline(renderer, xmcy, xpcy, y);
 				}
 			}
 			ocx = cx;
@@ -2090,10 +2090,10 @@ int filledEllipseRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Si
 				xph = x + h;
 				xmh = x - h;
 				if (k > 0) {
-					result |= hline(renderer, xmh, xph, y + k);
-					result |= hline(renderer, xmh, xph, y - k);
+					result |= horicontalline(renderer, xmh, xph, y + k);
+					result |= horicontalline(renderer, xmh, xph, y - k);
 				} else {
-					result |= hline(renderer, xmh, xph, y);
+					result |= horicontalline(renderer, xmh, xph, y);
 				}
 				ok = k;
 			}
@@ -2101,10 +2101,10 @@ int filledEllipseRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Si
 				xmi = x - i;
 				xpi = x + i;
 				if (j > 0) {
-					result |= hline(renderer, xmi, xpi, y + j);
-					result |= hline(renderer, xmi, xpi, y - j);
+					result |= horicontalline(renderer, xmi, xpi, y + j);
+					result |= horicontalline(renderer, xmi, xpi, y - j);
 				} else {
-					result |= hline(renderer, xmi, xpi, y);
+					result |= horicontalline(renderer, xmi, xpi, y);
 				}
 				oj = j;
 			}
@@ -2127,10 +2127,10 @@ int filledEllipseRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Si
 				xmj = x - j;
 				xpj = x + j;
 				if (i > 0) {
-					result |= hline(renderer, xmj, xpj, y + i);
-					result |= hline(renderer, xmj, xpj, y - i);
+					result |= horicontalline(renderer, xmj, xpj, y + i);
+					result |= horicontalline(renderer, xmj, xpj, y - i);
 				} else {
-					result |= hline(renderer, xmj, xpj, y);
+					result |= horicontalline(renderer, xmj, xpj, y);
 				}
 				oi = i;
 			}
@@ -2138,10 +2138,10 @@ int filledEllipseRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Si
 				xmk = x - k;
 				xpk = x + k;
 				if (h > 0) {
-					result |= hline(renderer, xmk, xpk, y + h);
-					result |= hline(renderer, xmk, xpk, y - h);
+					result |= horicontalline(renderer, xmk, xpk, y + h);
+					result |= horicontalline(renderer, xmk, xpk, y - h);
 				} else {
-					result |= hline(renderer, xmk, xpk, y);
+					result |= horicontalline(renderer, xmk, xpk, y);
 				}
 				oh = h;
 			}
@@ -2983,7 +2983,7 @@ int filledPolygonRGBAMT(SDL_Renderer * renderer, const Sint16 * vx, const Sint16
 			xa = (xa >> 16) + ((xa & 32768) >> 15);
 			xb = gfxPrimitivesPolyInts[i+1] - 1;
 			xb = (xb >> 16) + ((xb & 32768) >> 15);
-			result |= hline(renderer, xa, xb, y);
+			result |= horicontalline(renderer, xa, xb, y);
 		}
 	}
 
@@ -4121,18 +4121,18 @@ void _murphyWideline(SDL2_gfxMurphyIterator *m, Sint16 x1, Sint16 y1, Sint16 x2,
 {	
 	float offset = (float)width / 2.f;
 
-	Sint16 temp;
-	Sint16 ptx, pty, ptxx, ptxy, ml1x, ml1y, ml2x, ml2y, ml1bx, ml1by, ml2bx, ml2by;
+	Sint16 temp=0;
+	Sint16 ptx=0, pty=0, ptxx=0, ptxy=0, ml1x=0, ml1y=0, ml2x=0, ml2y=0, ml1bx=0, ml1by=0, ml2bx=0, ml2by=0;
 
-	int d0, d1;		/* difference terms d0=perpendicular to line, d1=along line */
+	int d0=0, d1=0;		/* difference terms d0=perpendicular to line, d1=along line */
 
-	int q;			/* pel counter,q=perpendicular to line */
-	int tmp;
+	int q=0;			/* pel counter,q=perpendicular to line */
+	int tmp=0;
 
-	int dd;			/* distance along line */
-	int tk;			/* thickness threshold */
-	double ang;		/* angle for initial point calculation */
-	double sang, cang;
+	int dd=0;			/* distance along line */
+	int tk=0;			/* thickness threshold */
+	double ang=0.0;		/* angle for initial point calculation */
+	double sang=0.0, cang=0.0;
 
 	/* Initialisation */
 	m->u = x2 - x1;	/* delta x */

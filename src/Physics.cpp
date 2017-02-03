@@ -1,4 +1,3 @@
-#ifndef __MACOSX__
 #include "Physics.h"
 #include "MainClass.h"
 
@@ -73,5 +72,4 @@ namespace SDL
         return d * m_pixelsPerMetre;
     }
 }
-#endif
 

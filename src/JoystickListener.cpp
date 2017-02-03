@@ -30,7 +30,7 @@ namespace SDL
 
             if(SDL_JoystickInstanceID(m_manager->getJoysticks()[i]) == e.which)
             {
-                index = i;
+                index = (int)i;
                 break;
             }
         }
@@ -77,7 +77,7 @@ namespace SDL
 
             if(SDL_JoystickInstanceID(m_manager->getJoysticks()[i]) == e.which)
             {
-                index = i;
+                index = (int)i;
                 break;
             }
         }
@@ -112,7 +112,7 @@ namespace SDL
 
             if(SDL_JoystickInstanceID(m_manager->getJoysticks()[i]) == e.which)
             {
-                index = i;
+                index = (int)i;
                 break;
             }
         }

@@ -87,7 +87,7 @@ namespace SDL
     inline void reverse(const std::vector<T>& vars)
     {
         int j = 0;
-        for(int i = vars.size()-1;i>j;i--)
+        for(size_t i = vars.size()-1;i>j;i--)
         {
             swap(vars[i],vars[j]);
             j++;

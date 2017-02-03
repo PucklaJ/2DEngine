@@ -153,7 +153,7 @@ namespace SDL
             if(f < minf)
             {
                 minf = f;
-                minI = i;
+                minI = (int)i;
             }
         }
         

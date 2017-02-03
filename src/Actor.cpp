@@ -464,14 +464,14 @@ namespace SDL
 
         for(size_t u = 0;u<m_children.size();u++)
         {
-            minI = u;
+            minI = (int)u;
             min = m_children[u]->getPriority();
             for(size_t i = u;i<m_children.size();i++)
             {
                 if(m_children[i]->getPriority() < min)
                 {
                     min = m_children[i]->getPriority();
-                    minI = i;
+                    minI = (int)i;
                 }
             }
 

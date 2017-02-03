@@ -119,73 +119,10 @@ namespace SDL
         return SDL_LockTexture(m_texture,r,pixels ? &pixels : &m_pixels,pitch ? pitch : &m_pitch);
     }
     
-    void TextureHandle::setPixels(void* pixels,int size)
-    {
-        memcpy(m_pixels,pixels,size == -1 ? ((m_pitch/4)*getHeight()) : size);
-    }
     
     void TextureHandle::unlock()
     {
         SDL_UnlockTexture(m_texture);
-    }
-    
-    SDL_Color TextureHandle::getPixel(int x,int y)
-    {
-        SDL_Color c = {0,0,0,0};
-        if(!m_pixels)
-        {
-            return c;
-        }
-        
-        int w = getWidth();
-        Uint32* pixels = (Uint32*)m_pixels;
-        Uint8* color = (Uint8*)pixels[y*w+x];
-        int length = /*sizeOfArray(color)*/5;
-        c.r = color[0];
-        for(int i = 0;i<length;i++)
-        {
-            switch(i)
-            {
-                case 0:
-                    c.r = color[i];
-                    break;
-                case 1:
-                    c.g = color[i];
-                    break;
-                case 2:
-                    c.b = color[i];
-                    break;
-                case 3:
-                    c.a = color[i];
-                    break;
-            }
-        }
-        
-        return c;
-    }
-    
-    int TextureHandle::loadPixels(SDL_Renderer* r,void* pixels,const SDL_Rect* rect,int bytesPerPixel)
-    {
-        int rv;
-        SDL_Texture* target = SDL_GetRenderTarget(r);
-        rv = setRenderTarget(r);
-        
-        if(rv == 0)
-            rv = SDL_RenderReadPixels(r,rect,getPixelFormat(),m_pixels,getWidth()*bytesPerPixel);
-        else
-            LogManager::log(std::string("Error: ") + SDL_GetError());
-        
-        SDL_SetRenderTarget(r,target);
-        
-        return rv;
-    }
-    void TextureHandle::unloadPixels()
-    {
-        if(m_pixels)
-        {
-            delete (Uint32*)m_pixels;
-            m_pixels = nullptr;
-        }
     }
     
     void TextureHandle::destroy()

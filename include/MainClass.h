@@ -5,7 +5,7 @@
 #include "Actor.h"
 #include "WindowHandle.h"
 #include <chrono>
-#include <SDL2/SDL2_framerate.h>
+#include <SDL2_framerate.h>
 
 #define NO_FPS_LOCK -1
 
@@ -20,9 +20,7 @@ class SDL_Rect;
 namespace SDL
 {
     class ResourceManager;
-    #ifndef __MACOSX__
     class Physics;
-    #endif
     class Camera;
     class JoystickManager;
     class TextureHandle;
@@ -47,9 +45,7 @@ namespace SDL
             SDL_Texture* getBackBuffer() {return m_backBuffer;}
             Camera* getCamera();
             int getMaxFPS() {return m_maxFPS;}
-            #ifndef __MACOSX__
             Physics* getPhysics();
-            #endif
             float getScaleW() const {return m_scaleW;}
             float getScaleH() const {return m_scaleH;}
             #ifdef _WIN32
@@ -59,9 +55,7 @@ namespace SDL
             #endif
             double getFPS() const {return m_fps;}
 
-            #ifndef __MACOSX__
             void activatePhysics(const Vector2& gravity = Vector2(0.0,-10.0),const Vector2& worldSize = Vector2(NORM_W,NORM_H));
-            #endif
 
             virtual bool render() override;
             virtual bool update() override;
@@ -81,9 +75,7 @@ namespace SDL
             InputManager* m_inputManager = nullptr;
             ResourceManager* m_resourceManager = nullptr;
             WindowHandle* m_window = nullptr;
-            #ifndef __MACOSX__
             Physics* m_physics = nullptr;
-            #endif
             Camera* m_camera = nullptr;
             JoystickManager* m_joystickManager = nullptr;
 
