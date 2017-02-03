@@ -42,8 +42,8 @@ namespace SDL
             
             for(size_t i = 0;i<m_tmxMap->GetNumTilesets();i++)
             {
-                const Tmx::Tileset* tileSet = m_tmxMap->GetTileset(i);
-                std::string imageFile = m_tmxMap->GetFilepath() + m_tmxMap->GetTileset(i)->GetImage()->GetSource();
+                const Tmx::Tileset* tileSet = m_tmxMap->GetTileset((int)i);
+                std::string imageFile = m_tmxMap->GetFilepath() + m_tmxMap->GetTileset((int)i)->GetImage()->GetSource();
                 TextureHandle* texture = m_mainClass->getResourceManager()->loadTexture(imageFile);
                 
                 tilesX[i] = 0;
@@ -69,7 +69,7 @@ namespace SDL
             
             for(size_t i = 0;i<m_tmxMap->GetNumTileLayers();i++)
             {
-                const Tmx::TileLayer* tileLayer = m_tmxMap->GetTileLayer(i);
+                const Tmx::TileLayer* tileLayer = m_tmxMap->GetTileLayer((int)i);
                 
                 for(int y = 0;y < tileLayer->GetHeight();y++)
                 {
@@ -79,7 +79,6 @@ namespace SDL
                             continue;
                         
                         int index = tileLayer->GetTileTilesetIndex(x,y);
-                        int gid = tileLayer->GetTileGid(x,y);
                         int tileID = tileLayer->GetTileId(x,y);
                         
                         const Tmx::Tileset* tileSet = m_tmxMap->GetTileset(index);
@@ -112,11 +111,15 @@ namespace SDL
         
         SDL_SetRenderTarget(m_mainClass->getRenderer(),m_mainClass->getBackBuffer());
         
-        m_srcRect.x = 0;
-        m_srcRect.y = 0;
-        SDL_QueryTexture(m_texture->getTexture(),nullptr,nullptr,&m_srcRect.w,&m_srcRect.h);
+        if(m_texture)
+        {
+            m_srcRect.x = 0;
+            m_srcRect.y = 0;
+            SDL_QueryTexture(m_texture->getTexture(),nullptr,nullptr,&m_srcRect.w,&m_srcRect.h);
+            
+            m_size.set(m_texture->getWidth(),m_texture->getHeight());
+        }
         
-        m_size.set(m_texture->getWidth(),m_texture->getHeight());
         
         LogManager::log("Finished Loading Map!");
        

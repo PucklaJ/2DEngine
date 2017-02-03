@@ -33,12 +33,6 @@ namespace SDL
         void unlock();
         int getPitch() {return m_pitch;}
         
-        int loadPixels(SDL_Renderer*,void* pixels = nullptr,const SDL_Rect* r = nullptr,int bytesPerPixel = 32);
-        void unloadPixels();
-        SDL_Color getPixel(int x,int y);
-        
-        void setPixels(void*,int size = -1);
-        
         void destroy();
         
     private:

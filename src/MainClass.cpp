@@ -524,7 +524,6 @@ namespace SDL
         return m_camera;
     }
 
-    #ifndef __MACOSX__
     Physics* MainClass::getPhysics()
     {
         return m_physics;
@@ -534,7 +533,6 @@ namespace SDL
     {
         m_physics = new Physics(this,gravity,worldSize);
     }
-    #endif
     
     void MainClass::onResize(int w,int h)
     {
@@ -634,9 +632,3 @@ namespace SDL
         }
     }
 }
-
-
-
-
-
-

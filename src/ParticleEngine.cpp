@@ -57,7 +57,7 @@ namespace SDL
     
     bool ParticleEngine::update()
     {
-        for(size_t i = m_particles.size()-1;i>=0 && i<m_particles.size();i--)
+        for(int i = (int)m_particles.size()-1;i>=0 && i<m_particles.size();i--)
         {
             if(!m_particleUpdate(m_particles[i],this) || m_particles[i].lifeTime <= 0.0)
             {

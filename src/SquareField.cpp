@@ -20,7 +20,7 @@ SquareField::~SquareField()
 
 bool SquareField::init()
 {
-    srand(time(nullptr));
+    srand((unsigned)time(nullptr));
     
     int squaresX = SQUARES_X;
     int squaresY = SQUARES_Y;
@@ -39,12 +39,12 @@ bool SquareField::init()
     
     do
     {
-        m_start = &m_squares[SDL::getRand(0,m_squares.size()-1)];
+        m_start = &m_squares[SDL::getRand(0,(int)m_squares.size()-1)];
     }while(m_start->solid);
     
     do
     {
-        m_target = &m_squares[SDL::getRand(0,m_squares.size()-1)];
+        m_target = &m_squares[SDL::getRand(0,(int)m_squares.size()-1)];
     }while(m_target->solid || (m_target->x == m_start->x && m_target->y == m_start->y));
     
     std::cout << "Target: " << m_target->x << "; " << m_target->y << std::endl;

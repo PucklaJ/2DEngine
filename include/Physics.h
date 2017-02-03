@@ -1,4 +1,3 @@
-#ifndef __MACOSX__
 #ifndef PHYSICS_H
 #define PHYSICS_H
 #include <Box2D/Box2D.h>
@@ -43,4 +42,3 @@ namespace SDL
 
 
 #endif // PHYSICS_H
-#endif

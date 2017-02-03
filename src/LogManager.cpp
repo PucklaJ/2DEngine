@@ -78,9 +78,7 @@ namespace SDL
         std::cout << msg;
 
         FILE* file = fopen(m_file,"a");
-        fprintf(file,msg.c_str());
+        fprintf(file,msg.c_str(),"");
         fclose(file);
     }
 }
-
-

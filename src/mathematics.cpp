@@ -153,7 +153,7 @@ namespace SDL
             if(f < minf)
             {
                 minf = f;
-                minI = i;
+                minI = (int)i;
             }
         }
         
@@ -288,5 +288,3 @@ namespace SDL
         os << "(" << v.getX() << "; " << v.getY() << ")";
         return os;
     }
-
-
