@@ -44,7 +44,6 @@ namespace SDL
             m_texture->setBlendMode(SDL_BLENDMODE_BLEND);
             
             int tilesX[m_tmxMap->GetNumTilesets()];
-            int tilesY[m_tmxMap->GetNumTilesets()];
             
             LogManager::log("Loading Tilesets...");
             
@@ -55,17 +54,13 @@ namespace SDL
                 TextureHandle* texture = m_mainClass->getResourceManager()->loadTexture(imageFile);
                 
                 tilesX[i] = 0;
-                tilesY[i] = 0;
-                while(tilesX[i]*tileSet->GetTileWidth() <= texture->getWidth())
+                
+                while(tilesX[i]*(tileSet->GetTileWidth() + tileSet->GetSpacing()) + tileSet->GetMargin() <= texture->getWidth())
                 {
                     tilesX[i]++;
                 }
+                
                 tilesX[i]--;
-                while(tilesY[i]*tileSet->GetTileHeight() <= texture->getHeight())
-                {
-                    tilesY[i]++;
-                }
-                tilesY[i]--;
             }
             
             LogManager::log("Loading Tiles..");
@@ -103,16 +98,16 @@ namespace SDL
                         textureY = (tileID - textureX) / tilesX[index];
                         texture = m_mainClass->getResourceManager()->loadTexture(imageFile);
                         
-                        textureX *= tileSet->GetTileWidth();
-                        textureY *= tileSet->GetTileHeight();
+                        textureX = textureX * (tileSet->GetTileWidth()+tileSet->GetSpacing())+tileSet->GetMargin();
+                        textureY = textureY * (tileSet->GetTileHeight()+tileSet->GetSpacing())+tileSet->GetMargin();
                         
-                        dst.x = x*tileSet->GetTileWidth();
-                        dst.y = y*tileSet->GetTileHeight();
+                        dst.x = x*m_tmxMap->GetTileWidth();
+                        dst.y = y*m_tmxMap->GetTileHeight();
                         dst.w = tileSet->GetTileWidth();
                         dst.h = tileSet->GetTileHeight();
                         
-                        src.x = textureX + tileSet->GetSpacing();
-                        src.y = textureY + tileSet->GetSpacing();
+                        src.x = textureX;
+                        src.y = textureY;
                         src.w = tileSet->GetTileWidth();
                         src.h = tileSet->GetTileHeight();
                         
@@ -136,12 +131,16 @@ namespace SDL
                 }
             }
             
+            LogManager::log("Loading Objects...");
+            
             for(int i = 0;i<m_tmxMap->GetNumObjectGroups();i++)
             {
                 const Tmx::ObjectGroup* objectGroup = m_tmxMap->GetObjectGroup(i);
                 
-                if(objectGroup->GetName().compare("Collision") == 0)
+                if(objectGroup->GetName().compare(std::string("Collision")) == 0)
                 {
+                    LogManager::log("Found Collision Layer");
+                    
                     if(!m_mainClass->getPhysics())
                     {
                         m_mainClass->activatePhysics();
@@ -156,6 +155,7 @@ namespace SDL
                         bdef.type = b2_staticBody;
                         
                         body = m_mainClass->getPhysics()->getWorld()->CreateBody(&bdef);
+                        LogManager::log("Created new Body");
                         
                         b2FixtureDef fdef;
                         fdef.density = 6;
@@ -173,11 +173,11 @@ namespace SDL
                             
                             b2CircleShape shape;
                             shape.m_radius = m_mainClass->getPhysics()->scalarPixelToWorld(ellipse->GetRadiusX());
-                            shape.m_p = m_mainClass->getPhysics()->coordsPixelToWorld(Vector2(object->GetX() - ellipse->GetCenterX(),object->GetY() - ellipse->GetCenterY()));
                             
                             fdef.shape = &shape;
                             
                             body->CreateFixture(&fdef);
+                            LogManager::log("Created Ellipse");
                         }
                         if(object->GetPolygon())
                         {
@@ -194,7 +194,7 @@ namespace SDL
                             for(int k;k<polygon->GetNumPoints();k++)
                             {
                                 const Tmx::Point& point = polygon->GetPoint(k);
-                                b2Vec2[k] = m_mainClass->getPhysics()->coordsPixelToWorld(Vector2(point.x,point.y));
+                                vertecis[k] = m_mainClass->getPhysics()->coordsPixelToWorld(Vector2(point.x,point.y));
                             }
                             
                             shape.Set(vertecis, polygon->GetNumPoints());
@@ -202,7 +202,10 @@ namespace SDL
                             fdef.shape = &shape;
                             
                             body->CreateFixture(&fdef);
+                            LogManager::log("Created Polygon");
                         }
+                        
+                        
                     }
                 }
             }
