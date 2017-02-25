@@ -28,12 +28,12 @@
 #include <tinyxml2.h>
 #include <stdio.h>
 
-#include <TMX/TmxMap.h>
-#include <TMX/TmxTileset.h>
-#include <TMX/TmxLayer.h>
-#include <TMX/TmxTileLayer.h>
-#include <TMX/TmxObjectGroup.h>
-#include <TMX/TmxImageLayer.h>
+#include "TMX/TmxMap.h"
+#include "TMX/TmxTileset.h"
+#include "TMX/TmxLayer.h"
+#include "TMX/TmxTileLayer.h"
+#include "TMX/TmxObjectGroup.h"
+#include "TMX/TmxImageLayer.h"
 
 using std::vector;
 using std::string;
@@ -123,7 +123,7 @@ namespace Tmx
     {
         file_name = fileName;
 
-        int lastSlash = (int)fileName.find_last_of("/");
+        int lastSlash = fileName.find_last_of("/");
 
         // Get the directory of the file using substring.
         if (lastSlash > 0) 
@@ -176,7 +176,7 @@ namespace Tmx
         // Clean up the flags from the gid (thanks marwes91).
         gid &= ~(FlippedHorizontallyFlag | FlippedVerticallyFlag | FlippedDiagonallyFlag);
 
-        for (int i = (int)tilesets.size() - 1; i > -1; --i)
+        for (int i = tilesets.size() - 1; i > -1; --i) 
         {
             // If the gid beyond the tileset gid return its index.
             if (gid >= tilesets[i]->GetFirstGid()) 
@@ -190,7 +190,7 @@ namespace Tmx
 
     const Tileset *Map::FindTileset(int gid) const 
     {
-        for (int i = (int)tilesets.size() - 1; i > -1; --i)
+        for (int i = tilesets.size() - 1; i > -1; --i) 
         {
             // If the gid beyond the tileset gid return it.
             if (gid >= tilesets[i]->GetFirstGid()) 

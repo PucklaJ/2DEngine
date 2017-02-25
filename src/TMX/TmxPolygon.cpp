@@ -28,8 +28,7 @@
 #include <tinyxml2.h>
 #include <cstdlib> 
 
-#include <TMX/TmxPolygon.h>
-#include <string>
+#include "TMX/TmxPolygon.h"
 
 namespace Tmx 
 {
@@ -40,8 +39,7 @@ namespace Tmx
 
     void Polygon::Parse(const tinyxml2::XMLNode *polygonNode)
     {
-        char *pointsLine;
-        strcpy(pointsLine,polygonNode->ToElement()->Attribute("points"));
+        char *pointsLine = strdup(polygonNode->ToElement()->Attribute("points"));
         
         char *token = strtok(pointsLine, " ");
         while (token)

@@ -12,6 +12,7 @@ namespace SDL
 {
     TiledMap::TiledMap(const std::string& file) : Sprite(0)
     {
+        LogManager::log("TiledMap Constructor");
         m_tmxMap = new Tmx::Map();
         m_tmxMap->ParseFile(file);
         
@@ -53,14 +54,14 @@ namespace SDL
                 std::string imageFile = m_tmxMap->GetFilepath() + m_tmxMap->GetTileset((int)i)->GetImage()->GetSource();
                 TextureHandle* texture = m_mainClass->getResourceManager()->loadTexture(imageFile);
                 
-                tilesX[i] = 0;
+                tilesX[i] = (texture->getWidth()-tileSet->GetMargin()*2+tileSet->GetSpacing())/(tileSet->GetTileWidth()+tileSet->GetSpacing());
                 
-                while(tilesX[i]*(tileSet->GetTileWidth() + tileSet->GetSpacing()) + tileSet->GetMargin() <= texture->getWidth())
+                /*while(tilesX[i]*(tileSet->GetTileWidth() + tileSet->GetSpacing()) + tileSet->GetMargin() <= texture->getWidth())
                 {
                     tilesX[i]++;
-                }
+                }*/
                 
-                tilesX[i]--;
+                //tilesX[i]--;
             }
             
             LogManager::log("Loading Tiles..");

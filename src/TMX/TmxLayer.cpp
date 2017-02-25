@@ -34,10 +34,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <TMX/TmxLayer.h>
-#include <TMX/TmxUtil.h>
-#include <TMX/TmxMap.h>
-#include <TMX/TmxTileset.h>
+#include "TMX/TmxLayer.h"
+#include "TMX/TmxUtil.h"
+#include "TMX/TmxMap.h"
+#include "TMX/TmxTileset.h"
 
 int Tmx::Layer::nextParseOrder = 0;
 

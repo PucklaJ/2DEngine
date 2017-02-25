@@ -28,7 +28,7 @@
 #include <tinyxml2.h>
 #include <cstdlib>
 
-#include <TMX/TmxPropertySet.h>
+#include "TMX/TmxPropertySet.h"
 
 using std::string;
 using std::map;

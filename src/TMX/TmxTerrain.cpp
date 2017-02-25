@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 #include <tinyxml2.h>
 
-#include <TMX/TmxTerrain.h>
+#include "TMX/TmxTerrain.h"
 
 namespace Tmx
 {

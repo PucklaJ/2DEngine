@@ -31,7 +31,7 @@
 #include <map>
 #include <string>
 
-#include <TMX/TmxProperty.h>
+#include "TMX/TmxProperty.h"
 
 namespace tinyxml2 {
     class XMLNode;
@@ -63,7 +63,7 @@ namespace Tmx
         bool GetBoolProperty(const std::string &name, bool defaultValue = false) const;
 
         // Returns the amount of properties.
-        int GetSize() const { return (int)properties.size(); }
+        int GetSize() const { return properties.size(); }
 
         // Checks if a property exists in the set.
         bool HasProperty( const std::string& name ) const;

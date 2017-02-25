@@ -29,8 +29,8 @@
 
 #include <string>
 
-#include <TMX/TmxPropertySet.h>
-#include <TMX/TmxMapTile.h>
+#include "TMX/TmxPropertySet.h"
+#include "TMX/TmxMapTile.h"
 
 namespace tinyxml2 {
     class XMLNode;

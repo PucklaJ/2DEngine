@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 #include <tinyxml2.h>
 
-#include <TMX/TmxTileOffset.h>
+#include "TMX/TmxTileOffset.h"
 
 namespace Tmx 
 {   

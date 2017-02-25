@@ -34,11 +34,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <TMX/TmxLayer.h>
-#include <TMX/TmxTileLayer.h>
-#include <TMX/TmxUtil.h>
-#include <TMX/TmxMap.h>
-#include <TMX/TmxTileset.h>
+#include "TMX/TmxLayer.h"
+#include "TMX/TmxTileLayer.h"
+#include "TMX/TmxUtil.h"
+#include "TMX/TmxMap.h"
+#include "TMX/TmxTileset.h"
 
 namespace Tmx 
 {
@@ -194,7 +194,7 @@ namespace Tmx
             // Use the utility class for decompressing (which uses zlib)
             out = (unsigned *)Util::DecompressGZIP(
                 text.c_str(), 
-                (int)text.size(),
+                text.size(), 
                 width * height * 4);
         } 
         else 
@@ -236,8 +236,7 @@ namespace Tmx
     void TileLayer::ParseCSV(const std::string &innerText) 
     {
         // Duplicate the string for use with C stdio.
-        char *csv;
-        strcpy(csv,innerText.c_str());
+        char *csv = strdup(innerText.c_str());
         
         // Iterate through every token of ';' in the CSV string.
         char *pch = strtok(csv, ",");

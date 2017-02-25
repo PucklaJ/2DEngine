@@ -31,20 +31,20 @@
 #define TMX_PARSER_VERSION_MINOR @VERSION_MINOR@
 #define TMX_PARSER_VERSION_PATCH @VERSION_PATCH@
 
-#include <TMX/TmxMap.h>
-#include <TMX/TmxTileset.h>
-#include <TMX/TmxTerrainArray.h>
-#include <TMX/TmxTerrain.h>
-#include <TMX/TmxTile.h>
-#include <TMX/TmxTileOffset.h>
-#include <TMX/TmxImage.h>
-#include <TMX/TmxLayer.h>
-#include <TMX/TmxTileLayer.h>
-#include <TMX/TmxObject.h>
-#include <TMX/TmxObjectGroup.h>
-#include <TMX/TmxEllipse.h>
-#include <TMX/TmxPolygon.h>
-#include <TMX/TmxPolyline.h>
-#include <TMX/TmxPropertySet.h>
-#include <TMX/TmxUtil.h>
-#include <TMX/TmxImageLayer.h>
+#include "TMX/TmxMap.h"
+#include "TMX/TmxTileset.h"
+#include "TMX/TmxTerrainArray.h"
+#include "TMX/TmxTerrain.h"
+#include "TMX/TmxTile.h"
+#include "TMX/TmxTileOffset.h"
+#include "TMX/TmxImage.h"
+#include "TMX/TmxLayer.h"
+#include "TMX/TmxTileLayer.h"
+#include "TMX/TmxObject.h"
+#include "TMX/TmxObjectGroup.h"
+#include "TMX/TmxEllipse.h"
+#include "TMX/TmxPolygon.h"
+#include "TMX/TmxPolyline.h"
+#include "TMX/TmxPropertySet.h"
+#include "TMX/TmxUtil.h"
+#include "TMX/TmxImageLayer.h"

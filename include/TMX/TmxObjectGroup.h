@@ -30,8 +30,8 @@
 #include <string>
 #include <vector>
 
-#include <TMX/TmxLayer.h>
-#include <TMX/TmxPropertySet.h>
+#include "TMX/TmxLayer.h"
+#include "TMX/TmxPropertySet.h"
 
 namespace tinyxml2 {
     class XMLNode;
@@ -58,7 +58,7 @@ namespace Tmx
         const Tmx::Object *GetObject(int index) const { return objects.at(index); }
 
         // Get the number of objects in the list.
-        int GetNumObjects() const { return (int)objects.size(); }
+        int GetNumObjects() const { return objects.size(); }
 
         // Get the color used to display the objects in this group.
         const std::string &GetColor() const { return color; }

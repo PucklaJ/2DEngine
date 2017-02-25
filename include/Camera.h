@@ -25,6 +25,7 @@ namespace SDL
             const float getScale() const {return m_scale;}
             float getRotation() const {return m_rotation;}
 
+            void addScale(float f) {setScale(m_scale+f);}
             void setScale(float f);
             void setRotation(float r){m_rotation = r;}
 

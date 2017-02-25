@@ -29,7 +29,7 @@
 
 #include <string>
 
-#include <TMX/TmxPropertySet.h>
+#include "TMX/TmxPropertySet.h"
 
 namespace tinyxml2 {
     class XMLNode;

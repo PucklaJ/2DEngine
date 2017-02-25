@@ -28,8 +28,8 @@
 #include <tinyxml2.h>
 #include <cstdlib>
 
-#include <TMX/TmxTerrainArray.h>
-#include <TMX/TmxTerrain.h>
+#include "TMX/TmxTerrainArray.h"
+#include "TMX/TmxTerrain.h"
 
 using std::string;
 using std::map;

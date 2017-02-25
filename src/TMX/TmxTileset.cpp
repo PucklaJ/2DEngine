@@ -28,13 +28,13 @@
 #include <tinyxml2.h>
 #include <cassert> //RJCB
 
-#include <TMX/TmxTileset.h>
-#include <TMX/TmxTileOffset.h>
-#include <TMX/TmxTerrainArray.h>
-#include <TMX/TmxTerrain.h>
-#include <TMX/TmxImage.h>
-#include <TMX/TmxTile.h>
-#include <TMX/TmxMap.h>
+#include "TMX/TmxTileset.h"
+#include "TMX/TmxTileOffset.h"
+#include "TMX/TmxTerrainArray.h"
+#include "TMX/TmxTerrain.h"
+#include "TMX/TmxImage.h"
+#include "TMX/TmxTile.h"
+#include "TMX/TmxMap.h"
 
 using std::vector;
 using std::string;

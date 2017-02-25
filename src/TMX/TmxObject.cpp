@@ -27,10 +27,10 @@
 //-----------------------------------------------------------------------------
 #include <tinyxml2.h>
 
-#include <TMX/TmxObject.h>
-#include <TMX/TmxPolygon.h>
-#include <TMX/TmxPolyline.h>
-#include <TMX/TmxEllipse.h>
+#include "TMX/TmxObject.h"
+#include "TMX/TmxPolygon.h"
+#include "TMX/TmxPolyline.h"
+#include "TMX/TmxEllipse.h"
 
 namespace Tmx 
 {

@@ -26,8 +26,8 @@
 #include <string>
 #include <vector>
 
-#include <TMX/TmxLayer.h>
-#include <TMX/TmxPropertySet.h>
+#include "TMX/TmxLayer.h"
+#include "TMX/TmxPropertySet.h"
 
 //class TiXmlNode;
 

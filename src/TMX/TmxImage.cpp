@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 #include <tinyxml2.h>
 
-#include <TMX/TmxImage.h>
+#include "TMX/TmxImage.h"
 
 namespace Tmx 
 {   
