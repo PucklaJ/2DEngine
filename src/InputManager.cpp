@@ -75,8 +75,14 @@ namespace SDL
 
     void InputManager::setMouseCoords(unsigned int x, unsigned int y)
     {
-        m_mouseCords.x = x;
-        m_mouseCords.y = y;
+        m_mouse.x = x;
+        m_mouse.y = y;
+    }
+    
+    void InputManager::setMouseWheel(int wheel_x,int wheel_y)
+    {
+        m_mouse.wheel_x = wheel_x;
+        m_mouse.wheel_y = wheel_y;
     }
 }
 

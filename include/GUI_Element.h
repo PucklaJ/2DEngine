@@ -5,7 +5,7 @@
 #include <SDL2/SDL_rect.h>
 #include <string>
 #include "Actor.h"
-#define MS_COORDS m_gui->getMainClass()->getInputManager()->getMouseCoords()
+#define MS_COORDS m_gui->getMainClass()->getInputManager()->getMouse()
 #define MOUSE_HOVERS_OVER (MS_COORDS.x > (m_scaledPos.getX()) && MS_COORDS.x < (m_scaledPos.getX())+m_scaledSize.getX() && MS_COORDS.y > (m_scaledPos.getY()) && MS_COORDS.y < (m_scaledPos.getY())+m_scaledSize.getY())
 
 

@@ -137,7 +137,7 @@ namespace SDL
             {
                 const Tmx::ObjectGroup* objectGroup = m_tmxMap->GetObjectGroup(i);
                 
-                if(objectGroup->GetName().compare(std::string("Collision")) == 0)
+                if(objectGroup->GetName().compare("Collision") == 0)
                 {
                     LogManager::log("Found Collision Layer");
                     

@@ -7,10 +7,12 @@
 using namespace std;
 namespace SDL
 {
-    struct MouseCoords
+    struct Mouse
     {
         unsigned int x;
         unsigned int y;
+        signed int wheel_x;
+        signed int wheel_y;
     };
 
     class InputManager : public Actor
@@ -25,12 +27,13 @@ namespace SDL
              void releaseKey(unsigned int kc);
              void pressKey(unsigned int kc);
              void setMouseCoords(unsigned int x,unsigned int y);
+             void setMouseWheel(int wheel_x,int wheel_y);
 
              bool update() override;
 
-             const MouseCoords getMouseCoords()
+             const Mouse& getMouse()
             {
-                return m_mouseCords;
+                return m_mouse;
             }
 
         protected:
@@ -40,7 +43,7 @@ namespace SDL
              map<unsigned int,bool> m_previousKeyMap;
 
              bool wasPressed(unsigned int kc);
-             MouseCoords m_mouseCords;
+             Mouse m_mouse;
 
     };
 }

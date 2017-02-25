@@ -98,6 +98,8 @@ namespace SDL
 
     void MainClass::m_init()
     {
+        LogManager::log("Initializing Engine");
+        
         if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
         {
             LogManager::log(std::string("Error Initializing SDL: ") + std::string(SDL_GetError()));
@@ -162,6 +164,8 @@ namespace SDL
         m_dstRect.y = 0;
         m_dstRect.w = NORM_W;
         m_dstRect.h = NORM_H;
+        
+        LogManager::log("Finished Initializing Engine");
     }
 
 
@@ -246,6 +250,7 @@ namespace SDL
     bool MainClass::pollEvents()
     {
         SDL_Event e;
+        m_inputManager->setMouseWheel(0,0);
         while(SDL_PollEvent(&e))
         {
             switch(e.type)
@@ -266,6 +271,9 @@ namespace SDL
                     break;
                 case SDL_MOUSEMOTION:
                     m_inputManager->setMouseCoords(e.motion.x,e.motion.y);
+                    break;
+                case SDL_MOUSEWHEEL:
+                    m_inputManager->setMouseWheel(e.wheel.x,e.wheel.y);
                     break;
             }
 
