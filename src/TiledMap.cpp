@@ -54,14 +54,7 @@ namespace SDL
                 std::string imageFile = m_tmxMap->GetFilepath() + m_tmxMap->GetTileset((int)i)->GetImage()->GetSource();
                 TextureHandle* texture = m_mainClass->getResourceManager()->loadTexture(imageFile);
                 
-                tilesX[i] = (texture->getWidth()-tileSet->GetMargin()*2+tileSet->GetSpacing())/(tileSet->GetTileWidth()+tileSet->GetSpacing());
-                
-                /*while(tilesX[i]*(tileSet->GetTileWidth() + tileSet->GetSpacing()) + tileSet->GetMargin() <= texture->getWidth())
-                {
-                    tilesX[i]++;
-                }*/
-                
-                //tilesX[i]--;
+                tilesX[i] = (tileSet->GetImage()->GetWidth()-tileSet->GetMargin()*2+tileSet->GetSpacing())/(tileSet->GetTileWidth()+tileSet->GetSpacing());
             }
             
             LogManager::log("Loading Tiles..");
@@ -94,23 +87,14 @@ namespace SDL
                         imageFile = m_tmxMap->GetFilepath() + tileSet->GetImage()->GetSource();
                         const Tmx::MapTile& tile = tileLayer->GetTile(x, y);
                         
-                        
-                        textureX = tileID % tilesX[index];
-                        textureY = (tileID - textureX) / tilesX[index];
                         texture = m_mainClass->getResourceManager()->loadTexture(imageFile);
                         
-                        textureX = textureX * (tileSet->GetTileWidth()+tileSet->GetSpacing())+tileSet->GetMargin();
-                        textureY = textureY * (tileSet->GetTileHeight()+tileSet->GetSpacing())+tileSet->GetMargin();
+                        getSrcRectForTileID(&src,tilesX[index],index,tileID);
                         
                         dst.x = x*m_tmxMap->GetTileWidth();
                         dst.y = y*m_tmxMap->GetTileHeight();
                         dst.w = tileSet->GetTileWidth();
                         dst.h = tileSet->GetTileHeight();
-                        
-                        src.x = textureX;
-                        src.y = textureY;
-                        src.w = tileSet->GetTileWidth();
-                        src.h = tileSet->GetTileHeight();
                         
                         if(tile.flippedHorizontally || tile.flippedVertically)
                         {
@@ -138,75 +122,58 @@ namespace SDL
             {
                 const Tmx::ObjectGroup* objectGroup = m_tmxMap->GetObjectGroup(i);
                 
-                if(objectGroup->GetName().compare("Collision") == 0)
+                for(int j = 0;j<objectGroup->GetNumObjects();j++)
                 {
-                    LogManager::log("Found Collision Layer");
-                    
-                    if(!m_mainClass->getPhysics())
+                    std::cout << "Object" << std::endl;
+                    const Tmx::Object* obj = objectGroup->GetObject(j);
+                    std::cout << "+ Position: " << obj->GetX() << "; " << obj->GetY() << std::endl;
+                    std::cout << "+ Rotation: " << obj->GetRot() << std::endl;
+                    std::cout << "+ Height: " << obj->GetHeight() << std::endl;
+                    std::cout << "+ Width: " << obj->GetWidth() << std::endl;
+                    std::cout << "+ Name: " << obj->GetName() << std::endl;
+                    std::cout << "+ Typ: " << obj->GetType() << std::endl;
+                    std::cout << "+ GID: " << obj->GetGid() << std::endl;
+                    if(obj->GetEllipse())
                     {
-                        m_mainClass->activatePhysics();
+                        //std::cout << "+ Ellipse" << std::endl;
+                        const Tmx::Ellipse* elipse = obj->GetEllipse();
+                        //std::cout << "++ Center: " << elipse->GetCenterX() << "; " << elipse->GetCenterY() << std::endl;
+                        //std::cout << "++ Radius: " << elipse->GetRadiusX() << "; " << elipse->GetRadiusY() << std::endl;
+                    }
+                    if(obj->GetPolygon())
+                    {
+                        //std::cout << "+ Polygon" << std::endl;
+                        const Tmx::Polygon* polygon = obj->GetPolygon();
+                        //std::cout << "++ Points" << std::endl;
+                        for(int k = 0;k<polygon->GetNumPoints();k++)
+                        {
+                            const Tmx::Point& point = polygon->GetPoint(k);
+                            //std::cout << "+++ " << k+1 << ". " << point.x << "; " << point.y << std::endl;
+                        }
+                    }
+                    if(obj->GetPolyline())
+                    {
+                        //std::cout << "+ Polyline" << std::endl;
+                        const Tmx::Polyline* polyline = obj->GetPolyline();
+                        //std::cout << "++ Points" << std::endl; 
+                        for(int k = 0;k<polyline->GetNumPoints();k++)
+                        {
+                            const Tmx::Point& point = polyline->GetPoint(k);
+                            //std::cout << "+++ " << k+1 << ". " << point.x << "; " << point.y << std::endl;
+                        }
                     }
                     
-                    for(int j = 0;j<objectGroup->GetNumObjects();j++)
+                    const Tmx::Tileset* gidTileSet = getTileset(obj->GetGid());
+                    if(gidTileSet)
                     {
-                        const Tmx::Object* object = objectGroup->GetObject(j);
-                        b2Body* body = nullptr;
-                        b2BodyDef bdef;
-                        bdef.position = m_mainClass->getPhysics()->coordsPixelToWorld(Vector2(object->GetX(),object->GetY()));
-                        bdef.type = b2_staticBody;
+                        getSrcRectForTileGID(&src,obj->GetGid());
+                        dst.x = obj->GetX();
+                        dst.y = obj->GetY()-obj->GetHeight();
+                        dst.w = obj->GetWidth();
+                        dst.h = obj->GetHeight();
                         
-                        body = m_mainClass->getPhysics()->getWorld()->CreateBody(&bdef);
-                        LogManager::log("Created new Body");
-                        
-                        b2FixtureDef fdef;
-                        fdef.density = 6;
-                        fdef.friction = 0.5;
-                        fdef.restitution = 0.5;
-                        
-                        if(object->GetEllipse())
-                        {
-                            const Tmx::Ellipse* ellipse = object->GetEllipse();
-                            
-                            b2FixtureDef fdef;
-                            fdef.density = 6;
-                            fdef.friction = 0.5;
-                            fdef.restitution = 0.5;
-                            
-                            b2CircleShape shape;
-                            shape.m_radius = m_mainClass->getPhysics()->scalarPixelToWorld(ellipse->GetRadiusX());
-                            
-                            fdef.shape = &shape;
-                            
-                            body->CreateFixture(&fdef);
-                            LogManager::log("Created Ellipse");
-                        }
-                        if(object->GetPolygon())
-                        {
-                            const Tmx::Polygon* polygon = object->GetPolygon();
-                            
-                            b2FixtureDef fdef;
-                            fdef.density = 6;
-                            fdef.friction = 0.5;
-                            fdef.restitution = 0.5;
-                            
-                            b2PolygonShape shape;
-                            b2Vec2 vertecis[100];
-                            
-                            for(int k;k<polygon->GetNumPoints();k++)
-                            {
-                                const Tmx::Point& point = polygon->GetPoint(k);
-                                vertecis[k] = m_mainClass->getPhysics()->coordsPixelToWorld(Vector2(point.x,point.y));
-                            }
-                            
-                            shape.Set(vertecis, polygon->GetNumPoints());
-                            
-                            fdef.shape = &shape;
-                            
-                            body->CreateFixture(&fdef);
-                            LogManager::log("Created Polygon");
-                        }
-                        
-                        
+                        texture = m_mainClass->getResourceManager()->loadTexture(m_tmxMap->GetFilepath() + gidTileSet->GetImage()->GetSource());
+                        texture->renderCopy(m_mainClass->getRenderer(),&dst,&src);
                     }
                 }
             }
@@ -227,6 +194,61 @@ namespace SDL
         LogManager::log("Finished Loading Map!");
        
         return true;
+    }
+    
+    const Tmx::Tileset* TiledMap::getTileset(int gid)
+    {
+        int curGID = 0;
+        
+        for(int i = 0;i<m_tmxMap->GetNumTilesets();i++)
+        {
+            curGID = m_tmxMap->GetTileset(i)->GetFirstGid();
+            
+            std::cout << "First GID: " << curGID << std::endl;
+            
+            if(curGID == gid)
+            {
+                return m_tmxMap->GetTileset(i);
+            }
+            else if(i != 0 && curGID > gid)
+            {
+                return m_tmxMap->GetTileset(i-1);
+            }
+            else if(i + 1 == m_tmxMap->GetNumTilesets())
+            {
+                return m_tmxMap->GetTileset(i);
+            }
+        }
+        
+        return nullptr;
+    }
+    
+    void TiledMap::getSrcRectForTileGID(SDL_Rect* src,int gid)
+    {
+        const Tmx::Tileset* tileSet = getTileset(gid);
+        int id = gid - tileSet->GetFirstGid();
+        int numTilesX = (tileSet->GetImage()->GetWidth()-tileSet->GetMargin()*2+tileSet->GetSpacing())/(tileSet->GetTileWidth()+tileSet->GetSpacing());
+        
+        src->x = id % numTilesX;
+        src->y = (id - src->x) / numTilesX;
+        
+        src->x = src->x * (tileSet->GetTileWidth()+tileSet->GetSpacing())+tileSet->GetMargin();
+        src->y = src->y * (tileSet->GetTileHeight()+tileSet->GetSpacing())+tileSet->GetMargin();
+        src->w = tileSet->GetTileWidth();
+        src->h = tileSet->GetTileHeight();
+    }
+    
+    void TiledMap::getSrcRectForTileID(SDL_Rect* src,int numTilesX,int index,int id)
+    {
+        src->x = id % numTilesX;
+        src->y = (id - src->x) / numTilesX;
+        
+        const Tmx::Tileset* tileSet = m_tmxMap->GetTileset(index);
+        
+        src->x = src->x * (tileSet->GetTileWidth()+tileSet->GetSpacing())+tileSet->GetMargin();
+        src->y = src->y * (tileSet->GetTileHeight()+tileSet->GetSpacing())+tileSet->GetMargin();
+        src->w = tileSet->GetTileWidth();
+        src->h = tileSet->GetTileHeight();
     }
     
     bool TiledMap::update()

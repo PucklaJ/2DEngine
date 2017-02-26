@@ -19,6 +19,11 @@ namespace SDL
         Tmx::Map* getTmxMap() {return m_tmxMap;}
         
     private:
+        int getIDofTileset(const Tmx::Tileset*);
+        const Tmx::Tileset* getTileset(int);
+        void getSrcRectForTileGID(SDL_Rect*,int);
+        void getSrcRectForTileID(SDL_Rect*,int,int,int);
+        
         Tmx::Map* m_tmxMap = nullptr;
     };
 }

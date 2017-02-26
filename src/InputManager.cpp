@@ -19,36 +19,29 @@ namespace SDL
     }
     bool InputManager::justPressed(unsigned int kc)
     {
-        //std::cout << "Checking justPressed" << std::endl;
         bool re = isPressed(kc) && !wasPressed(kc);
         return re;
     }
 
     bool InputManager::isPressed(unsigned int kc)
     {
-        //std::cout << "Checking isPressed" << std::endl;
         mapIt it = m_keyMap.find(kc);
 
         if(it != m_keyMap.end())
         {
             return m_keyMap[kc];
         }
-        
-        //std::cout << "Checked isPressed" << std::endl;
 
         return false;
     }
 
     bool InputManager::wasPressed(unsigned int kc)
     {
-        //std::cout << "Check wasPressed" << std::endl;
         mapIt it = m_previousKeyMap.find(kc);
         if(it != m_previousKeyMap.end())
         {
             return m_previousKeyMap[kc];
         }
-        
-        //std::cout << "Checked wasPressed" << std::endl;
 
         return false;
     }
