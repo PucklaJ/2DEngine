@@ -16,8 +16,8 @@ namespace SDL
     }
     
     ParticleEngine::ParticleEngine(TextureHandle* texture,const Vector2& gravity) : 
-        m_texture(texture),
-        m_gravity(gravity)
+        m_gravity(gravity),
+        m_texture(texture)
     {
         
     }
@@ -57,7 +57,7 @@ namespace SDL
     
     bool ParticleEngine::update()
     {
-        for(int i = (int)m_particles.size()-1;i>=0 && i<m_particles.size();i--)
+        for(int i = (int)m_particles.size()-1;i>=0 && i<(int)m_particles.size();i--)
         {
             if(!m_particleUpdate(m_particles[i],this) || m_particles[i].lifeTime <= 0.0)
             {

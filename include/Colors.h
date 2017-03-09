@@ -13,6 +13,8 @@ namespace SDL
         const SDL_Color BLACK = {0,0,0,255};
         const SDL_Color GRAY = {128,128,128,255};
         const SDL_Color YELLOW = {255,255,0,255};
+        const SDL_Color BROWN = {51,25,0,255};
+        const SDL_Color PINK = {255,0,255,255};
     }
 }
 

@@ -183,7 +183,7 @@ namespace SDL
         }
         
         //down
-        if(pos.y < (squares.size()/w-1))
+        if(pos.y < ((int)squares.size()/w-1))
         {
             indices[2] = (pos.y+1) * w + pos.x;
         }

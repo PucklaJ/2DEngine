@@ -168,7 +168,7 @@ namespace SDL
                 }
                 else
                 {
-                    if(m_srcRect.x++ == m_textures->size())
+                    if(m_srcRect.x++ == (int)m_textures->size())
                     {
                         if(!m_loop)
                             return true;

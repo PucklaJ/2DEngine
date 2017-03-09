@@ -5,9 +5,9 @@
 namespace SDL
 {
     TextActor::TextActor(TTF_Font* font,const SDL_Color& color,const std::string& text,int order) : Sprite(order),
+        m_text(text),
         m_font(font),
-        m_color(color),
-        m_text(text)
+        m_color(color)
     {
         setName(text.c_str());
     }

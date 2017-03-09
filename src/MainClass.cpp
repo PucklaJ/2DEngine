@@ -405,7 +405,7 @@ namespace SDL
     void MainClass::takeAwayHighestAndLowestDts()
     {
         int numIndex = 0;
-        double num;
+        double num=0;
 
         // Take away two Lowest
         for(int j = 0;j<2;j++)

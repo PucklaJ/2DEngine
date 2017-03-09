@@ -28,9 +28,9 @@ namespace SDL
     std::vector<int> Actor::m_ids;
 
     Actor::Actor(int order,const char* name) :
+        m_name(name),
         m_parent(nullptr),
-        m_priority(order),
-        m_name(name)
+        m_priority(order)
     {
         do
         {

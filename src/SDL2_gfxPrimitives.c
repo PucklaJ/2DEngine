@@ -869,7 +869,7 @@ int _aalineRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16
 	Sint32 xx0, yy0, xx1, yy1;
 	int result;
 	Uint32 intshift, erracc, erradj;
-	Uint32 erracctmp, wgt, wgtcompmask;
+	Uint32 erracctmp, wgt/*, wgtcompmask*/;
 	int dx, dy, tmp, xdir, y0p1, x0pxdir;
 
 	/*
@@ -965,7 +965,7 @@ int _aalineRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16
 	/*
 	* Mask used to flip all bits in an intensity weighting 
 	*/
-	wgtcompmask = AAlevels - 1;
+	//wgtcompmask = AAlevels - 1;
 
 	/*
 	* Draw the initial pixel in the foreground color 
@@ -1208,7 +1208,7 @@ int arcRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Sint16 star
 		return (pixelRGBA(renderer, x, y, r, g, b, a));
 	}
 
-	// Octant labelling
+	/* Octant labelling
 	//      
 	//  \ 5 | 6 /
 	//   \  |  /
@@ -1223,7 +1223,7 @@ int arcRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Sint16 star
 
 	// Initially reset bitmask to 0x00000000
 	// the set whether or not to keep drawing a given octant.
-	// For example: 0x00111100 means we're drawing in octants 2-5
+	// For example: 0x00111100 means we're drawing in octants 2-5*/
 	drawoct = 0; 
 
 	/*
@@ -2596,7 +2596,7 @@ int polygon(SDL_Renderer * renderer, const Sint16 * vx, const Sint16 * vy, int n
 	/*
 	* Draw 
 	*/
-	int result;
+	int result=0;
 	int i, nn;
 	SDL_Point* points;
 
@@ -2663,7 +2663,7 @@ int polygonRGBA(SDL_Renderer * renderer, const Sint16 * vx, const Sint16 * vy, i
 	* Draw 
 	*/
 	int result;
-	const Sint16 *x1, *y1, *x2, *y2;
+	const Sint16 /**x1, *y1,*/ *x2, *y2;
 
 	/*
 	* Vertex array NULL check 
@@ -2685,8 +2685,8 @@ int polygonRGBA(SDL_Renderer * renderer, const Sint16 * vx, const Sint16 * vy, i
 	/*
 	* Pointer setup 
 	*/
-	x1 = x2 = vx;
-	y1 = y2 = vy;
+	/*x1 = */x2 = vx;
+	/*y1 = */y2 = vy;
 	x2++;
 	y2++;
 
@@ -4122,7 +4122,7 @@ void _murphyWideline(SDL2_gfxMurphyIterator *m, Sint16 x1, Sint16 y1, Sint16 x2,
 	float offset = (float)width / 2.f;
 
 	Sint16 temp=0;
-	Sint16 ptx=0, pty=0, ptxx=0, ptxy=0, ml1x=0, ml1y=0, ml2x=0, ml2y=0, ml1bx=0, ml1by=0, ml2bx=0, ml2by=0;
+	Sint16 ptx=0, pty=0,/* ptxx=0, ptxy=0, */ml1x=0, ml1y=0, ml2x=0, ml2y=0, ml1bx=0, ml1by=0, ml2bx=0, ml2by=0;
 
 	int d0=0, d1=0;		/* difference terms d0=perpendicular to line, d1=along line */
 
@@ -4207,8 +4207,8 @@ void _murphyWideline(SDL2_gfxMurphyIterator *m, Sint16 x1, Sint16 y1, Sint16 x2,
 		m->last2x = -32768;
 		m->last2y = -32768;
 	}
-	ptxx = ptx;
-	ptxy = pty;
+	//ptxx = ptx;
+	//ptxy = pty;
 
 	for (q = 0; dd <= tk; q++) {	/* outer loop, stepping perpendicular to line */
 
