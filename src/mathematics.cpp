@@ -2,6 +2,7 @@
 #include <cmath>
 #include <iostream>
 #include <cstdlib>
+#include <Actor.h>
 
 namespace SDL
 {
@@ -24,6 +25,14 @@ namespace SDL
         m_y/=l;
         
         return *this;
+    }
+    
+    bool Vector2::isOnScreen()
+    {
+        if(m_x < 0 || m_y < 0 || m_x > NORM_W || m_y > NORM_H)
+            return false;
+            
+        return true;
     }
 
     const Vector2& Vector2::operator+=(const Vector2& v2)

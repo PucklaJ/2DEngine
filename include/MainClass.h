@@ -56,7 +56,8 @@ namespace SDL
             double getFPS() const {return m_fps;}
 
             void activatePhysics(const Vector2& gravity = Vector2(0.0,-10.0),const Vector2& worldSize = Vector2(NORM_W,NORM_H));
-
+            
+            virtual bool m_render() override;
             virtual bool render() override;
             virtual bool update() override;
             virtual bool m_update() override;

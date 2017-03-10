@@ -35,6 +35,7 @@ namespace SDL
             void rescaleSize(Vector2&,const Vector2&);
             
             Vector2 getWorldPosition(const Vector2&);
+            Vector2 getScreenPosition(const Vector2&);
             
             void follow(Actor*);
             void setPosition(const float&,const float&) override;

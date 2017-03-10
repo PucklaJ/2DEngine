@@ -23,6 +23,8 @@ namespace SDL
         void set(double x,double y) {m_x=x;m_y=y;}
         
         const Vector2& normalise();
+        
+        bool isOnScreen();
 
         const Vector2& operator+=(const Vector2&);
         Vector2 operator+(const Vector2&);

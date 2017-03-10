@@ -29,6 +29,8 @@ namespace SDL
             
             static Vector2 toVector2(const b2Vec2&);
             
+            void setDebug(bool b){m_debug = b;}
+            bool getDebug() {return m_debug;}
             
         protected:
 
@@ -37,6 +39,7 @@ namespace SDL
             MainClass* m_mainClass;
             Vector2 m_worldSize;
             double m_pixelsPerMetre = 10.0;
+            bool m_debug = false;
     };
 }
 

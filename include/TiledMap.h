@@ -3,6 +3,8 @@
 #include <Sprite.h>
 #include <TMX/Tmx.h>
 #include <string>
+#include <vector>
+#include "Physics.h"
 
 namespace SDL
 {
@@ -43,6 +45,8 @@ namespace SDL
         Tmx::Map* m_tmxMap = nullptr;
         int* m_tilesX = nullptr;
         SDL_Color m_background;
+        std::vector<b2Body*> m_bodies;
+        
     };
 }
 

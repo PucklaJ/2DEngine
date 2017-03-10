@@ -1,5 +1,6 @@
 #include "Physics.h"
 #include "MainClass.h"
+#include "Box2DDebugDrawer.h"
 
 namespace SDL
 {
@@ -8,6 +9,7 @@ namespace SDL
         m_world = new b2World(b2Vec2(gravity.getX(),gravity.getY()));
         m_mainClass = mainClass;
         m_worldSize = worldSize;
+        m_world->SetDebugDraw(new Box2DDebugDrawer(m_mainClass));
     }
 
     Physics::~Physics()
@@ -18,7 +20,6 @@ namespace SDL
     void Physics::update()
     {
         m_world->Step(m_mainClass->getDeltaTimeInSeconds(),6,2);
-        m_world->DrawDebugData();
     }
 
     void Physics::quit()

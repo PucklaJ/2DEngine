@@ -5,7 +5,6 @@
 #include "ResourceManager.h"
 #include <iostream>
 #include "mathematics.h"
-#include "Physics.h"
 #include <Box2D/Box2D.h>
 #include <SDL2_gfxPrimitives.h>
 
@@ -373,14 +372,16 @@ namespace SDL
                 continue;
             }
             
-            const Tmx::Tileset* gidTileSet = getTileset(obj->GetGid());
+            int GID = obj->GetGid() < 0 ? 282 : obj->GetGid();
+            
+            const Tmx::Tileset* gidTileSet = getTileset(GID);
             if(gidTileSet)
             {
                 std::cout << "+ Tile" << std::endl;
                 
-                getSrcRectForTileGID(&src,obj->GetGid());
-                dst.x = obj->GetX() + objectGroup->GetX();
-                dst.y = obj->GetY()-obj->GetHeight() + objectGroup->GetY();
+                getSrcRectForTileGID(&src,GID);
+                dst.x = obj->GetX();
+                dst.y = obj->GetY()-obj->GetHeight();
                 dst.w = obj->GetWidth();
                 dst.h = obj->GetHeight();
                 
@@ -389,10 +390,10 @@ namespace SDL
                 texture->renderCopy(m_mainClass->getRenderer(),&dst,&src);
                 texture->setAlphaMod(255);
                 
-                int tileID = getTileIDForTileGID(obj->GetGid());
+                int tileID = getTileIDForTileGID(GID);
                 const Tmx::Tile* ttile = gidTileSet->GetTile(tileID);
                 if(ttile && ttile->GetNumObjects() > 0)
-                    loadCollisionObjects(ttile,obj->GetX(),obj->GetY());
+                    loadCollisionObjects(ttile,obj->GetX(),obj->GetY()-obj->GetHeight());
                 
                 continue;
             }
@@ -445,8 +446,18 @@ namespace SDL
                 
                 if(obj->IsVisible())
                 {
-                    aaellipseRGBA(m_mainClass->getRenderer(),ellipse->GetCenterX()+x,ellipse->GetCenterY()+y-m_tmxMap->GetTileHeight(),ellipse->GetRadiusX(),ellipse->GetRadiusY(),color.r,color.g,color.b,255);
-                    filledEllipseRGBA(m_mainClass->getRenderer(),ellipse->GetCenterX()+x,ellipse->GetCenterY()+y-m_tmxMap->GetTileHeight(),ellipse->GetRadiusX(),ellipse->GetRadiusY(),color.r,color.g,color.b,64);
+                    aaellipseRGBA(m_mainClass->getRenderer(),
+                                  ellipse->GetCenterX()+x,
+                                  ellipse->GetCenterY()+y,
+                                  ellipse->GetRadiusX(),
+                                  ellipse->GetRadiusY(),
+                                  color.r,color.g,color.b,255);
+                    filledEllipseRGBA(m_mainClass->getRenderer(),
+                                      ellipse->GetCenterX()+x,
+                                      ellipse->GetCenterY()+y,
+                                      ellipse->GetRadiusX(),
+                                      ellipse->GetRadiusY(),
+                                      color.r,color.g,color.b,64);
                 }
                 
                 loadCollisionEllipse(obj,x,y);
@@ -467,7 +478,7 @@ namespace SDL
                     const Tmx::Point& point = polygon->GetPoint(k);
                     std::cout << "+++++++++++++++++ " << k+1 << ". " << point.x << "; " << point.y << std::endl;
                     vx[k] = obj->GetX()+point.x+x;
-                    vy[k] = obj->GetY()+point.y+y-m_tmxMap->GetTileHeight();
+                    vy[k] = obj->GetY()+point.y+y;
                     
                     std::cout << "+++++++++++++++++ vx: " << vx[k] << "; vy: " << vy[k] << std::endl;
                 }
@@ -487,7 +498,11 @@ namespace SDL
                     }
                     
                     //aapolygonRGBA(m_mainClass->getRenderer(),vx,vy,polygon->GetNumPoints(),color.r,color.g,color.b,(Uint8)(objectGroup->GetOpacity()*255.0f));
-                    filledPolygonRGBA(m_mainClass->getRenderer(),vx,vy,polygon->GetNumPoints(),color.r,color.g,color.b,64);
+                    filledPolygonRGBA(m_mainClass->getRenderer(),
+                                      vx,
+                                      vy,
+                                      polygon->GetNumPoints(),
+                                      color.r,color.g,color.b,64);
                 }
                 
                 loadCollisionPolygon(obj,x,y);
@@ -507,7 +522,12 @@ namespace SDL
                         std::cout << "+++++++++++++++++ " << k << ". " << point1.x << "; " << point1.y << std::endl;
                         
                         if(obj->IsVisible())
-                            aalineRGBA(m_mainClass->getRenderer(),point1.x+obj->GetX()+x,point1.y+obj->GetY()+y-m_tmxMap->GetTileHeight(),point2.x+obj->GetX()+x,point2.y+obj->GetY()+y-m_tmxMap->GetTileHeight(),color.r,color.g,color.b,255);
+                            aalineRGBA(m_mainClass->getRenderer(),
+                                       point1.x+obj->GetX()+x,
+                                       point1.y+obj->GetY()+y,
+                                       point2.x+obj->GetX()+x,
+                                       point2.y+obj->GetY()+y,
+                                       color.r,color.g,color.b,255);
                     }
                 }
                 
@@ -519,10 +539,20 @@ namespace SDL
             
                 std::cout << "+++++++++++++++ Rectangle" << std::endl;
                 
-                if(obj->IsVisible())
+                //if(obj->IsVisible())
                 {
-                    rectangleRGBA(m_mainClass->getRenderer(),obj->GetX()+x,obj->GetY()+y-m_tmxMap->GetTileHeight(),obj->GetX()+obj->GetWidth()+x,obj->GetY()+m_tmxMap->GetTileHeight()+y-m_tmxMap->GetTileHeight(),color.r,color.g,color.b,255);
-                    boxRGBA(m_mainClass->getRenderer(),obj->GetX()+x,obj->GetY()+y-m_tmxMap->GetTileHeight(),obj->GetX()+obj->GetWidth()+x,obj->GetY()+m_tmxMap->GetTileHeight()+y-m_tmxMap->GetTileHeight(),color.r,color.g,color.b,64);
+                    rectangleRGBA(m_mainClass->getRenderer(),
+                                  obj->GetX()+x,
+                                  obj->GetY()+y,
+                                  obj->GetX()+obj->GetWidth()+x,
+                                  obj->GetY()+obj->GetHeight()+y,
+                                  color.r,color.g,color.b,255);
+                    boxRGBA(m_mainClass->getRenderer(),
+                            obj->GetX()+x,
+                            obj->GetY()+y,
+                            obj->GetX()+obj->GetWidth()+x,
+                            obj->GetY()+obj->GetHeight()+y,
+                            color.r,color.g,color.b,64);
                 }
                 
                 loadCollisionRectangle(obj,x,y);
@@ -534,40 +564,104 @@ namespace SDL
     
     void TiledMap::loadCollisionEllipse(const Tmx::Object* obj,int x,int y)
     {
-        /*return;
-        
-        // TODO
-        
         const Tmx::Ellipse* ellipse;
         b2Body* body;
         b2BodyDef bdef;
         b2FixtureDef fdef[3];
         b2CircleShape cshape[2];
-        b2PolygonShape pshape;
+        //b2PolygonShape pshape; TODO
         
         ellipse = obj->GetEllipse();
         
         bdef.position = m_mainClass->getPhysics()->coordsPixelToWorld(Vector2(x+ellipse->GetCenterX()+obj->GetX(),y+ellipse->GetCenterY()+obj->GetY()));
         bdef.type = b2_staticBody;
         
-        fdef[0].density = 1.0f;
-        fdef[0].friction = 1;
-        fdef[0].restitution = 1;
+        fdef[0].density = 6.0f;
+        fdef[0].friction = 0.0f;
+        fdef[0].restitution = 0.0f;
         
-        if(obj->GetEllipse()->GetRadiusX() == obj->GetEllipse()->GetRadiusY())
+        body = m_mainClass->getPhysics()->getWorld()->CreateBody(&bdef);
+        
+        if(ellipse->GetRadiusX() == ellipse->GetRadiusY())
         {
+            cshape[0].m_radius = m_mainClass->getPhysics()->scalarPixelToWorld(ellipse->GetRadiusX());
+            fdef[0].shape = &cshape[0];
             
-        }*/
+            body->CreateFixture(&fdef[0]);
+            
+            m_bodies.push_back(body);
+        }
+        
     }
     
     void TiledMap::loadCollisionPolygon(const Tmx::Object* obj,int x,int y)
     {
+        /*const Tmx::Polygon* polygon = obj->GetPolygon();
+        b2Body* body;
+        b2BodyDef bdef;
+        b2FixtureDef fdef;
+        b2PolygonShape shape;
+        b2Vec2 v[polygon->GetNumPoints()];
         
+        bdef.position = m_mainClass->getPhysics()->coordsPixelToWorld(Vector2((double)x+(double)obj->GetX()+(double)obj->GetWidth()/2.0,(double)y+(double)obj->GetY()+(double)obj->GetHeight()/2.0));
+        bdef.type = b2_staticBody;
+        
+        fdef.density = 6.0f;
+        fdef.friction = 1.0f;
+        fdef.restitution = 0.0f;
+        
+        for(int i = polygon->GetNumPoints()-1;i>=0;i--)
+        {
+            const Tmx::Point& point = polygon->GetPoint(i);
+            double xb = x + obj->GetX() + point.x;
+            double yb = y + obj->GetY() + point.y;
+            
+            v[polygon->GetNumPoints()-1-i] = m_mainClass->getPhysics()->coordsPixelToWorld(Vector2(xb,yb));
+        }
+        
+        shape.Set(v,polygon->GetNumPoints());
+        
+        fdef.shape = &shape;
+        
+        body = m_mainClass->getPhysics()->getWorld()->CreateBody(&bdef);
+        body->CreateFixture(&fdef);
+        
+        m_bodies.push_back(body); TODO*/
     }
     
     void TiledMap::loadCollisionPolyline(const Tmx::Object* obj,int x,int y)
     {
+        /*const Tmx::Polyline* polyline = obj->GetPolyline();
+        b2Body* body;
+        b2BodyDef bdef;
+        b2FixtureDef fdef;
+        b2ChainShape shape;
+        b2Vec2 v[polyline->GetNumPoints()];
         
+        bdef.position = m_mainClass->getPhysics()->coordsPixelToWorld(Vector2((double)x+(double)obj->GetX()+(double)obj->GetWidth()/2.0,(double)y+(double)obj->GetY()+(double)obj->GetHeight()/2.0));
+        bdef.type = b2_staticBody;
+        
+        fdef.density = 6.0f;
+        fdef.friction = 1.0f;
+        fdef.restitution = 0.0f;
+        
+        for(int i = polyline->GetNumPoints()-1;i>=0;i--)
+        {
+            const Tmx::Point& point = polyline->GetPoint(i);
+            double xb = point.x+obj->GetX();
+            double yb = point.y+obj->GetY();
+            
+            v[polyline->GetNumPoints()-1-i] = m_mainClass->getPhysics()->coordsPixelToWorld(Vector2(xb,yb));
+        }
+        
+        shape.CreateChain(v,polyline->GetNumPoints());
+        
+        fdef.shape = &shape;
+        
+        body = m_mainClass->getPhysics()->getWorld()->CreateBody(&bdef);
+        body->CreateFixture(&fdef);
+        
+        m_bodies.push_back(body); TODO*/
     }
     
     void TiledMap::loadCollisionRectangle(const Tmx::Object* obj,int x,int y)
@@ -578,7 +672,7 @@ namespace SDL
         b2PolygonShape shape;
         
         bdef.type = b2_staticBody;
-        bdef.position = bdef.position = m_mainClass->getPhysics()->coordsPixelToWorld(Vector2((double)x+(double)obj->GetX()+(double)obj->GetWidth()/2.0,(double)y+(double)obj->GetY()-(double)obj->GetHeight()/2.0));
+        bdef.position = bdef.position = m_mainClass->getPhysics()->coordsPixelToWorld(Vector2((double)x+(double)obj->GetX()+(double)obj->GetWidth()/2.0,(double)y+(double)obj->GetY()+(double)obj->GetHeight()/2.0));
         
         fdef.density = 6.0f;
         fdef.friction = 1.0f;
@@ -589,6 +683,8 @@ namespace SDL
         
         body = m_mainClass->getPhysics()->getWorld()->CreateBody(&bdef);
         body->CreateFixture(&fdef);
+        
+        m_bodies.push_back(body);
     }
     
     const Tmx::Tileset* TiledMap::getTileset(int gid)
@@ -667,5 +763,11 @@ namespace SDL
     {
         delete m_tmxMap;
         m_tmxMap = nullptr;
+        
+        for(size_t i = 0;i<m_bodies.size();i++)
+        {
+            m_mainClass->getPhysics()->getWorld()->DestroyBody(m_bodies[i]);
+        }
+        m_bodies.clear();
     }
 }

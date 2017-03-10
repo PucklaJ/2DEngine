@@ -103,6 +103,15 @@ namespace SDL
         
         return worldPos;
     }
+    
+    Vector2 Camera::getScreenPosition(const Vector2& worldPos)
+    {
+        Vector2 screenPos(worldPos.getX(),worldPos.getY());
+        
+        screenPos.set(screenPos.getX() * m_scale - m_position.getX()*m_scale,screenPos.getY() * m_scale - m_position.getY()*m_scale);
+        
+        return screenPos;
+    }
 
     void Camera::follow(Actor* a)
     {

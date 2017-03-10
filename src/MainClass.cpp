@@ -464,7 +464,17 @@ namespace SDL
         }
     }
 
-
+    bool MainClass::m_render()
+    {
+        Actor::m_render();
+        
+        if(m_physics && m_physics->getDebug())
+        {
+            m_physics->getWorld()->DrawDebugData();
+        }
+        
+        return true;
+    }
 
     bool MainClass::render()
     {
