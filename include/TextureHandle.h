@@ -8,7 +8,7 @@ namespace SDL
     {
     public:
         TextureHandle(SDL_Texture*);
-        TextureHandle(SDL_Renderer*,Uint32,int,int,int);
+        TextureHandle(SDL_Renderer*,Uint32 format,int access,int width,int height);
         TextureHandle(SDL_Renderer*,SDL_Surface*);
         ~TextureHandle();
         

@@ -15,6 +15,8 @@ namespace SDL
         const SDL_Color YELLOW = {255,255,0,255};
         const SDL_Color BROWN = {51,25,0,255};
         const SDL_Color PINK = {255,0,255,255};
+        
+        extern SDL_Color RAND(short r = -1,short g = -1,short b = -1);
     }
 }
 

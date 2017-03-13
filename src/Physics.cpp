@@ -72,4 +72,84 @@ namespace SDL
     {
         return d * m_pixelsPerMetre;
     }
+    
+    b2Body* Physics::createBOX(const Vector2& pos,double w,double h,float32 friction,float32 restitution,float32 density,b2BodyType type)
+    {
+        b2BodyDef bdef;
+        b2FixtureDef fdef;
+        b2PolygonShape shape;
+        b2Body* body;
+        
+        bdef.type = type;
+        bdef.position = coordsPixelToWorld(pos);
+        
+        fdef.density = density;
+        fdef.friction = friction;
+        fdef.restitution = restitution;
+        
+        shape.SetAsBox(scalarPixelToWorld(w/2.0),scalarPixelToWorld(h/2.0));
+        
+        fdef.shape = &shape;
+        
+        body = m_world->CreateBody(&bdef);
+        body->CreateFixture(&fdef);
+        
+        return body;
+    }
+    
+    b2Body* Physics::createBOX(const Vector2& pos,double w,double h,b2BodyDef& bdef,b2FixtureDef& fdef)
+    {
+        b2PolygonShape shape;
+        b2Body* body;
+        
+        bdef.position = coordsPixelToWorld(pos);
+        
+        shape.SetAsBox(scalarPixelToWorld(w/2.0),scalarPixelToWorld(h/2.0));
+        
+        fdef.shape = &shape;
+        
+        body = m_world->CreateBody(&bdef);
+        body->CreateFixture(&fdef);
+        
+        return body;
+    }
+    
+    b2Body* Physics::createCIRCLE(const Vector2& pos,double radius,float32 friction,float32 restitution,float32 density,b2BodyType type)
+    {
+        b2BodyDef bdef;
+        b2FixtureDef fdef;
+        b2CircleShape shape;
+        b2Body* body;
+        
+        bdef.type = type;
+        bdef.position = coordsPixelToWorld(pos);
+        
+        fdef.density = density;
+        fdef.friction = friction;
+        fdef.restitution = restitution;
+        
+        shape.m_radius = scalarPixelToWorld(radius);
+        
+        fdef.shape = &shape;
+        
+        body = m_world->CreateBody(&bdef);
+        body->CreateFixture(&fdef);
+        
+        return body;
+    }
+    
+    b2Body* Physics::createCIRCLE(const Vector2& pos,double radius,b2BodyDef& bdef,b2FixtureDef& fdef)
+    {
+        b2CircleShape shape;
+        b2Body* body;
+        
+        bdef.position = coordsPixelToWorld(pos);
+        
+        shape.m_radius = scalarPixelToWorld(radius);
+        
+        body = m_world->CreateBody(&bdef);
+        body->CreateFixture(&fdef);
+        
+        return body;
+    }
 }

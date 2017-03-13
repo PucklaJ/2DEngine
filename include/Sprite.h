@@ -5,6 +5,13 @@
 
 namespace SDL
 {
+    namespace Textures
+    {
+        extern TextureHandle* BOX(MainClass*,const Vector2&,const SDL_Color&);
+        extern TextureHandle* CIRCLE(MainClass*,double,const SDL_Color&,bool filled = true,const SDL_Color* back = nullptr);
+    }
+    
+    
     class Sprite : public Actor
     {
     public:

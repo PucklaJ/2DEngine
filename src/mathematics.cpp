@@ -125,6 +125,14 @@ namespace SDL
 
         return v;
     }
+    
+    const Vector2 operator/(const Vector2& v,double d)
+    {
+        Vector2 v1 = v;
+        v1.set(v1.getX()/d,v1.getY()/d);
+        
+        return v1;
+    }
 
     double abs(const double& d)
     {

@@ -16,6 +16,8 @@
 #include "JoystickManager.h"
 #include "operators.h"
 #include "TextureHandle.h"
+#include "Colors.h"
+#include "Sprite.h"
 
 using namespace std;
 
@@ -165,6 +167,8 @@ namespace SDL
         m_dstRect.w = NORM_W;
         m_dstRect.h = NORM_H;
         
+        m_ambientLight = SDL::Colors::WHITE;
+        
         LogManager::log("Finished Initializing Engine");
     }
 
@@ -225,6 +229,7 @@ namespace SDL
                     SDL_RenderCopy(m_renderer,m_backBuffer,nullptr,m_scaleToResolution ? &m_backBufferDst : &m_dstRect);
 
                     SDL_RenderPresent(m_renderer);
+                    SDL_SetRenderDrawColor(m_renderer,m_ambientLight.r,m_ambientLight.g,m_ambientLight.b,m_ambientLight.a);
                     SDL_RenderClear(m_renderer);
 
                     SDL_SetRenderTarget(m_renderer,m_backBuffer);
@@ -486,12 +491,22 @@ namespace SDL
 
     bool MainClass::m_update()
     {
-        #ifndef __MACOSX__
         if(m_physics)
         {
             m_physics->update();
         }
-        #endif
+        
+        if(m_ambientSprite)
+        {
+            // Delete everything on ambient Sprite
+            m_ambientSprite->getTexture()->setRenderTarget(m_renderer);
+            SDL_SetRenderDrawBlendMode(m_renderer,SDL_BLENDMODE_NONE);
+            SDL_SetRenderDrawColor(m_renderer,m_ambientLight.r,m_ambientLight.g,m_ambientLight.b,m_ambientLight.a);
+            SDL_RenderClear(m_renderer);
+            SDL_SetRenderTarget(m_renderer,m_backBuffer);
+            SDL_SetRenderDrawColor(m_renderer,0,0,0,255);
+            SDL_SetRenderDrawBlendMode(m_renderer,SDL_BLENDMODE_BLEND);
+        }
 
         return Actor::m_update();
     }
@@ -648,5 +663,29 @@ namespace SDL
         {
             LogManager::log("Error while setting max FPS");
         }
+    }
+    
+    void MainClass::setAmbientLight(const SDL_Color& col)
+    {
+        m_ambientLight = col;
+        
+        if(!m_ambientSprite)
+        {
+            TextureHandle* tex = Textures::BOX(this,Vector2(NORM_W,NORM_H),Colors::WHITE);
+            tex->setColorMod(m_ambientLight);
+            tex->setAlphaMod(m_ambientLight.a);
+            tex->setBlendMode(SDL_BLENDMODE_MOD);
+            
+            m_ambientSprite = new Sprite(tex,AMB_ORDER);
+            m_ambientSprite->setAffectedByCamera(false);
+            m_ambientSprite->setName("AmbientSprite");
+            
+            addChild(m_ambientSprite);
+        }
+    }
+    
+    Sprite* MainClass::getAmbientSprite()
+    {
+        return m_ambientSprite;
     }
 }

@@ -16,14 +16,10 @@
 #define GUI_ORDER IPMGR_ORDER-1
 #define CAM_ORDER GUI_ORDER-1
 #define B2DEBUG_ORDER CAM_ORDER-1
+#define AMB_ORDER B2DEBUG_ORDER-1
 
 namespace SDL
 {
-    class TextureHandle;
-    
-    extern TextureHandle* createTexture(SDL_Renderer*,const SDL_Rect&,const SDL_Color&);
-    extern TextureHandle* createTexture(SDL_Renderer*,const Vector2&,const SDL_Color&);
-
     class MainClass;
 
     class Actor

@@ -18,12 +18,13 @@ class SDL_Rect;
 
 
 namespace SDL
-{
+{            
     class ResourceManager;
     class Physics;
     class Camera;
     class JoystickManager;
     class TextureHandle;
+    class Sprite;
 
     class MainClass : public Actor
     {
@@ -35,6 +36,7 @@ namespace SDL
 
             void setTimeScale(double d){m_timeScale = d;}
             void setMaxFPS(int);
+            void setAmbientLight(const SDL_Color& col);
 
             static MainClass* getInstance() {return instance;}
 
@@ -54,8 +56,12 @@ namespace SDL
             double getDeltaTimeInSeconds() const {return m_smoothDeltaTimeInSeconds*m_timeScale;}
             #endif
             double getFPS() const {return m_fps;}
+            const SDL_Color& getAmbientLight() const {return m_ambientLight;}
+            Sprite* getAmbientSprite();
 
             void activatePhysics(const Vector2& gravity = Vector2(0.0,-10.0),const Vector2& worldSize = Vector2(NORM_W,NORM_H));
+            
+            
             
             virtual bool m_render() override;
             virtual bool render() override;
@@ -133,6 +139,9 @@ namespace SDL
             duration<double,micro> m_deltaClockTime;
             
             FPSmanager m_fpsManager;
+            
+            SDL_Color m_ambientLight;
+            Sprite* m_ambientSprite = nullptr;
 
     };
 }

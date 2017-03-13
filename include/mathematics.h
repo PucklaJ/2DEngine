@@ -43,6 +43,8 @@ namespace SDL
         double m_y;
 
     };
+    
+    extern const Vector2 operator/(const Vector2&,double);
 
     extern double abs(const double& d);
     extern int getRand(int min,int max);
