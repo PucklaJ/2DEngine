@@ -7,6 +7,8 @@
 namespace SDL
 {
     class GUI_Element;
+    class Mouse;
+    
     class Camera : public Actor
     {
     public:
@@ -35,6 +37,7 @@ namespace SDL
             void rescaleSize(Vector2&,const Vector2&);
             
             Vector2 getWorldPosition(const Vector2&);
+            Vector2 getWorldPosition(const Mouse&);
             Vector2 getScreenPosition(const Vector2&);
             
             void follow(Actor*);

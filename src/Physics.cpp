@@ -29,10 +29,7 @@ namespace SDL
     
     b2Vec2 Physics::coordsPixelToWorld(const Vector2& pos)
     {
-        b2Vec2 worldPos;
-        
-        worldPos.x = pos.getX();
-        worldPos.y = pos.getY();
+        b2Vec2 worldPos(pos.getX(),pos.getY());
         
         worldPos.x -= m_worldSize.getX()/2.0;
         worldPos.y -= m_worldSize.getY()/2.0;

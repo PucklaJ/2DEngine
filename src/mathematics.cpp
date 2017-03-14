@@ -126,6 +126,7 @@ namespace SDL
         return v;
     }
     
+#ifndef __APPLE__
     const Vector2 operator/(const Vector2& v,double d)
     {
         Vector2 v1 = v;
@@ -133,6 +134,7 @@ namespace SDL
         
         return v1;
     }
+#endif
 
     double abs(const double& d)
     {

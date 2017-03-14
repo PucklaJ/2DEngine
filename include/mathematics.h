@@ -44,8 +44,9 @@ namespace SDL
 
     };
     
+#ifndef __APPLE__
     extern const Vector2 operator/(const Vector2&,double);
-
+#endif
     extern double abs(const double& d);
     extern int getRand(int min,int max);
     extern bool luck(int percent);

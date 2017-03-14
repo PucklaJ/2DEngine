@@ -80,7 +80,7 @@ namespace SDL
     {
         if(m_follow)
         {
-            m_position = (Vector2)m_follow->getPosition() - Vector2(NORM_W/2.0,NORM_H/2.0)/(double)m_scale; 
+            m_position = (Vector2)m_follow->getPosition() - Vector2(NORM_W/2.0,NORM_H/2.0)/(double)m_scale;
         }
         else
         {
@@ -102,6 +102,11 @@ namespace SDL
         worldPos.set((worldPos.getX() + m_position.getX()*m_scale)/m_scale,(worldPos.getY() + m_position.getY()*m_scale)/m_scale);
         
         return worldPos;
+    }
+    
+    Vector2 Camera::getWorldPosition(const Mouse& ms)
+    {
+        return getWorldPosition(Vector2(ms.x,ms.y));
     }
     
     Vector2 Camera::getScreenPosition(const Vector2& worldPos)
