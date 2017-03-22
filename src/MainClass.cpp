@@ -136,15 +136,17 @@ namespace SDL
             getchar();
             exit(-1);
         }
+        
+        m_nativeResolution.set(m_windowWidth, m_windowHeight);
 
-        m_scaleW = m_windowWidth/(float)NORM_W;
-        m_scaleH = m_windowHeight/(float)NORM_H;
+        m_scaleW = m_windowWidth/m_nativeResolution.getX();
+        m_scaleH = m_windowHeight/m_nativeResolution.getY();
 
         m_backBuffer = SDL_CreateTexture(m_renderer,
-                                   SDL_GetWindowPixelFormat(m_window->getWindow()),
+                                   m_window->getPixelFormat(),
                                    SDL_TEXTUREACCESS_TARGET,
-                                   NORM_W,
-                                   NORM_H);
+                                   m_nativeResolution.getX(),
+                                   m_nativeResolution.getY());
 
         SDL_SetRenderTarget(m_renderer,m_backBuffer);
 
@@ -164,8 +166,8 @@ namespace SDL
         
         m_dstRect.x = 0;
         m_dstRect.y = 0;
-        m_dstRect.w = NORM_W;
-        m_dstRect.h = NORM_H;
+        m_dstRect.w = m_nativeResolution.getX();
+        m_dstRect.h = m_nativeResolution.getY();
         
         m_ambientLight = SDL::Colors::WHITE;
         
@@ -569,8 +571,9 @@ namespace SDL
     
     void MainClass::onResize(int w,int h)
     {
-        double scaleDif = ((double)w/(double)h)/(NORM_W/NORM_H);
-        double normScale = NORM_W/NORM_H;
+        double normScale = m_nativeResolution.getX()/m_nativeResolution.getY();
+        double scaleDif = ((double)w/(double)h)/normScale;
+        
         
         if(scaleDif < 0.5 || scaleDif > 2.0)
         {
@@ -587,18 +590,9 @@ namespace SDL
         }
         
         #ifdef _WIN32
-        SDL_DestroyTexture(m_backBuffer);
-        m_backBuffer = SDL_CreateTexture(m_renderer,
-                                   SDL_GetWindowPixelFormat(m_window->getWindow()),
-                                   SDL_TEXTUREACCESS_TARGET,
-                                   NORM_W,
-                                   NORM_H);
-        SDL_SetTextureBlendMode(m_backBuffer,SDL_BLENDMODE_BLEND);
+        recreateBuffer();
         SDL_Rect viewport = {0,0,w,h};
-        SDL_RenderSetViewport(m_renderer,&viewport);
-        SDL_SetRenderTarget(m_renderer,nullptr);
-        SDL_RenderSetViewport(m_renderer,&viewport);
-        SDL_SetRenderTarget(m_renderer,m_backBuffer);
+        resetViewport(&viewport);
         #endif
     }
     
@@ -606,8 +600,9 @@ namespace SDL
     {
         SDL_Point newRes = m_window->getResolution();
         
-        double scaleDif = ((double)newRes.x/(double)newRes.y)/(NORM_W/NORM_H);
-        double normScale = NORM_W/NORM_H;
+        double normScale = m_nativeResolution.getX()/m_nativeResolution.getY();
+        double scaleDif = ((double)newRes.x/(double)newRes.y)/normScale;
+        
         
         if((scaleDif < 0.5 || scaleDif > 2.0) && full)
         {
@@ -624,18 +619,9 @@ namespace SDL
         }
         
         #ifdef _WIN32
-        SDL_DestroyTexture(m_backBuffer);
-        m_backBuffer = SDL_CreateTexture(m_renderer,
-                                   SDL_GetWindowPixelFormat(m_window->getWindow()),
-                                   SDL_TEXTUREACCESS_TARGET,
-                                   NORM_W,
-                                   NORM_H);
-        SDL_SetTextureBlendMode(m_backBuffer,SDL_BLENDMODE_BLEND);
+        recreateBuffer();
         SDL_Rect viewport = {0,0,newRes.x,newRes.y};
-        SDL_RenderSetViewport(m_renderer,&viewport);
-        SDL_SetRenderTarget(m_renderer,nullptr);
-        SDL_RenderSetViewport(m_renderer,&viewport);
-        SDL_SetRenderTarget(m_renderer,m_backBuffer);
+        resetViewport(&viewport);
         #endif
     }
     
@@ -671,7 +657,7 @@ namespace SDL
         
         if(!m_ambientSprite)
         {
-            TextureHandle* tex = Textures::BOX(this,Vector2(NORM_W,NORM_H),Colors::WHITE);
+            TextureHandle* tex = Textures::BOX(this,Vector2(m_nativeResolution.getX(),m_nativeResolution.getY()),Colors::WHITE);
             tex->setColorMod(m_ambientLight);
             tex->setAlphaMod(m_ambientLight.a);
             tex->setBlendMode(SDL_BLENDMODE_MOD);
@@ -687,5 +673,41 @@ namespace SDL
     Sprite* MainClass::getAmbientSprite()
     {
         return m_ambientSprite;
+    }
+    
+    void MainClass::setNativeRes(const Vector2& v)
+    {
+        m_nativeResolution = v;
+        recreateBuffer();
+        SDL_Rect rect = {0,0,(int)v.getX(),(int)v.getY()};
+        resetViewport(&rect);
+        
+        if(m_ambientSprite)
+        {
+            m_ambientSprite->setSize(m_nativeResolution);
+        }
+    }
+    
+    void MainClass::recreateBuffer()
+    {
+        if(m_backBuffer)
+            SDL_DestroyTexture(m_backBuffer);
+        m_backBuffer = SDL_CreateTexture(m_renderer, m_window->getPixelFormat(), SDL_TEXTUREACCESS_TARGET, (int)m_nativeResolution.getX(), (int)m_nativeResolution.getY());
+        SDL_SetRenderTarget(m_renderer, m_backBuffer);
+        SDL_RenderClear(m_renderer);
+        SDL_SetTextureBlendMode(m_backBuffer, SDL_BLENDMODE_BLEND);
+        m_backBufferDst.w = m_nativeResolution.getX();
+        m_backBufferDst.h = m_nativeResolution.getY();
+        m_dstRect = m_backBufferDst;
+        m_dstRect.x = m_dstRect.y = 0;
+    }
+    
+    void MainClass::resetViewport(SDL_Rect* rect)
+    {
+        SDL_SetRenderTarget(m_renderer, m_backBuffer);
+        SDL_RenderSetViewport(m_renderer,rect);
+        SDL_SetRenderTarget(m_renderer,nullptr);
+        SDL_RenderSetViewport(m_renderer,rect);
+        SDL_SetRenderTarget(m_renderer,m_backBuffer);
     }
 }

@@ -8,6 +8,8 @@
 
 #define NORM_W 1280.0
 #define NORM_H 720.0
+#define NATIVE_W (m_mainClass->getNativeRes().getX())
+#define NATIVE_H (m_mainClass->getNativeRes().getY())
 
 #ifndef INT_MAX
 #define INT_MAX 2147483647

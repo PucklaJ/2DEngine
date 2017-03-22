@@ -8,6 +8,8 @@
 
 namespace SDL
 {
+    class MainClass;
+    
     class Vector2
     {
     public:
@@ -24,7 +26,7 @@ namespace SDL
         
         const Vector2& normalise();
         
-        bool isOnScreen();
+        bool isOnScreen(MainClass* c = nullptr);
 
         const Vector2& operator+=(const Vector2&);
         Vector2 operator+(const Vector2&);

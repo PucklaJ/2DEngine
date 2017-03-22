@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <Actor.h>
+#include <MainClass.h>
 
 namespace SDL
 {
@@ -27,9 +28,9 @@ namespace SDL
         return *this;
     }
     
-    bool Vector2::isOnScreen()
+    bool Vector2::isOnScreen(MainClass* m)
     {
-        if(m_x < 0 || m_y < 0 || m_x > NORM_W || m_y > NORM_H)
+        if(m_x < 0 || m_y < 0 || m_x > (m == nullptr ? MainClass::getInstance() : m)->getNativeRes().getX() || m_y > (m == nullptr ? MainClass::getInstance() : m)->getNativeRes().getY())
             return false;
             
         return true;

@@ -37,6 +37,7 @@ namespace SDL
             void setTimeScale(double d){m_timeScale = d;}
             void setMaxFPS(int);
             void setAmbientLight(const SDL_Color& col);
+            void setNativeRes(const Vector2& v);
 
             static MainClass* getInstance() {return instance;}
 
@@ -50,6 +51,7 @@ namespace SDL
             Physics* getPhysics();
             float getScaleW() const {return m_scaleW;}
             float getScaleH() const {return m_scaleH;}
+            const Vector2& getNativeRes() const {return m_nativeResolution;}
             #ifdef _WIN32
             double getDeltaTimeInSeconds() const {return m_realDeltaTimeInSeconds*m_timeScale;}
             #else
@@ -97,6 +99,8 @@ namespace SDL
             void startTimeMeasure();
             void mainLoop();
             int endTimeMeasure();
+            void recreateBuffer();
+            void resetViewport(SDL_Rect*);
 
             void m_init();
 
@@ -142,6 +146,8 @@ namespace SDL
             
             SDL_Color m_ambientLight;
             Sprite* m_ambientSprite = nullptr;
+        
+            Vector2 m_nativeResolution;
 
     };
 }
