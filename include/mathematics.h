@@ -8,6 +8,8 @@
 
 namespace SDL
 {
+    class MainClass;
+    
     class Vector2
     {
     public:
@@ -24,7 +26,7 @@ namespace SDL
         
         const Vector2& normalise();
         
-        bool isOnScreen();
+        bool isOnScreen(MainClass* c = nullptr);
 
         const Vector2& operator+=(const Vector2&);
         Vector2 operator+(const Vector2&);
@@ -44,8 +46,9 @@ namespace SDL
 
     };
     
+#ifndef __APPLE__
     extern const Vector2 operator/(const Vector2&,double);
-
+#endif
     extern double abs(const double& d);
     extern int getRand(int min,int max);
     extern bool luck(int percent);

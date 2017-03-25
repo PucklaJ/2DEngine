@@ -8,13 +8,15 @@ namespace SDL
     Camera::Camera(int order) : Actor(order,"Camera")
     {
         m_isAffectedByCamera = false;
-        setPosition(NORM_W/2.0,NORM_H/2.0);
+        
     }
 
     bool Camera::init()
     {
-        m_size.setX(NORM_W);
-        m_size.setY(NORM_H);
+        setPosition(NATIVE_W/2.0,NATIVE_H/2.0);
+        
+        m_size.setX(NATIVE_W);
+        m_size.setY(NATIVE_H);
 
         return true;
     }
@@ -80,11 +82,11 @@ namespace SDL
     {
         if(m_follow)
         {
-            m_position = (Vector2)m_follow->getPosition() - Vector2(NORM_W/2.0,NORM_H/2.0)/(double)m_scale; 
+            m_position = (Vector2)m_follow->getPosition() - Vector2(NATIVE_W/2.0,NATIVE_H/2.0)/(double)m_scale;
         }
         else
         {
-            m_position = m_helpPos - Vector2(NORM_W/2.0,NORM_H/2.0)/(double)m_scale;
+            m_position = m_helpPos - Vector2(NATIVE_W/2.0,NATIVE_H/2.0)/(double)m_scale;
         }
         
         return true;
@@ -104,6 +106,11 @@ namespace SDL
         return worldPos;
     }
     
+    Vector2 Camera::getWorldPosition(const Mouse& ms)
+    {
+        return getWorldPosition(Vector2(ms.x,ms.y));
+    }
+    
     Vector2 Camera::getScreenPosition(const Vector2& worldPos)
     {
         Vector2 screenPos(worldPos.getX(),worldPos.getY());
@@ -118,7 +125,7 @@ namespace SDL
         m_follow = a;
         if(!a)
         {
-            m_helpPos = m_position + Vector2(NORM_W/2.0,NORM_H/2.0)/(double)m_scale;
+            m_helpPos = m_position + Vector2(NATIVE_W/2.0,NATIVE_H/2.0)/(double)m_scale;
         }
     }
 
@@ -131,7 +138,7 @@ namespace SDL
     void Camera::addPosition(const float& x, const float& y)
     {
         Actor::addPosition(x,y);
-        m_helpPos = m_position + Vector2(NORM_W/2.0,NORM_H/2.0)/(double)m_scale;
+        m_helpPos = m_position + Vector2(NATIVE_W/2.0,NATIVE_H/2.0)/(double)m_scale;
     }
 }
 

@@ -389,7 +389,7 @@ namespace SDL
     bool Actor::isOnScreen()
     {
         if(m_position.getX() + m_size.getX() < 0 || m_position.getY() + m_size.getY() < 0 ||
-           m_position.getX() > NORM_W || m_position.getY() > NORM_H)
+           m_position.getX() > NATIVE_W || m_position.getY() > NATIVE_H)
         {
             return false;
         }

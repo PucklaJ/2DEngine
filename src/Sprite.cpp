@@ -272,7 +272,7 @@ namespace SDL
         else
         {
             if(m_position.getX() + m_size.getX()*2.0 < 0 || m_position.getY() + m_size.getY()*2.0 < 0 ||
-               m_position.getX()-m_size.getX() > NORM_W || m_position.getY()-m_size.getY() > NORM_H)
+               m_position.getX()-m_size.getX() > NATIVE_W || m_position.getY()-m_size.getY() > NATIVE_H)
             {
                 return false;
             }
