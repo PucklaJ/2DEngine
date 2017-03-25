@@ -444,7 +444,7 @@ namespace SDL
                 std::cout << "++++++++++++++++ Center: " << ellipse->GetCenterX() << "; " << ellipse->GetCenterY() << std::endl;
                 std::cout << "++++++++++++++++ Radius: " << ellipse->GetRadiusX() << "; " << ellipse->GetRadiusY() << std::endl;
                 
-                if(obj->IsVisible())
+                if(false && obj->IsVisible())
                 {
                     aaellipseRGBA(m_mainClass->getRenderer(),
                                   ellipse->GetCenterX()+x,
@@ -483,7 +483,7 @@ namespace SDL
                     std::cout << "+++++++++++++++++ vx: " << vx[k] << "; vy: " << vy[k] << std::endl;
                 }
                 
-                if(obj->IsVisible())
+                if(false && obj->IsVisible())
                 {
                     for(int k = 0;k<polygon->GetNumPoints();k++)
                     {
@@ -521,7 +521,7 @@ namespace SDL
                         const Tmx::Point& point2 = polyline->GetPoint(k);
                         std::cout << "+++++++++++++++++ " << k << ". " << point1.x << "; " << point1.y << std::endl;
                         
-                        if(obj->IsVisible())
+                        if(false && obj->IsVisible())
                             aalineRGBA(m_mainClass->getRenderer(),
                                        point1.x+obj->GetX()+x,
                                        point1.y+obj->GetY()+y,
@@ -539,7 +539,7 @@ namespace SDL
             
                 std::cout << "+++++++++++++++ Rectangle" << std::endl;
                 
-                //if(obj->IsVisible())
+                if(false && obj->IsVisible())
                 {
                     rectangleRGBA(m_mainClass->getRenderer(),
                                   obj->GetX()+x,
@@ -672,7 +672,9 @@ namespace SDL
         b2PolygonShape shape;
         
         bdef.type = b2_staticBody;
-        bdef.position = bdef.position = m_mainClass->getPhysics()->coordsPixelToWorld(Vector2((double)x+(double)obj->GetX()+(double)obj->GetWidth()/2.0,(double)y+(double)obj->GetY()+(double)obj->GetHeight()/2.0));
+        bdef.position = m_mainClass->getPhysics()->coordsPixelToWorld(Vector2((double)x+(double)obj->GetX()+(double)obj->GetWidth()/2.0,(double)y+(double)obj->GetY()+(double)obj->GetHeight()/2.0));
+        
+        std::cout << "Create Rectangle at " << Vector2((double)x+(double)obj->GetX()+(double)obj->GetWidth()/2.0,(double)y+(double)obj->GetY()+(double)obj->GetHeight()/2.0) << std::endl;
         
         fdef.density = 6.0f;
         fdef.friction = 1.0f;
