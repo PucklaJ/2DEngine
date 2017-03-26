@@ -20,11 +20,11 @@ namespace SDL
     {
         Uint32 flags = SDL_GetWindowFlags(m_window);
 
-        if(flags & SDL_WINDOW_FULLSCREEN && b)
+        if((flags & SDL_WINDOW_FULLSCREEN) && b)
         {
             return;
         }
-        else if(flags & (SDL_WINDOW_FULLSCREEN | SDL_WINDOW_FULLSCREEN_DESKTOP) && !b)
+        else if((flags & (SDL_WINDOW_FULLSCREEN | SDL_WINDOW_FULLSCREEN_DESKTOP)) && !b)
         {
             SDL_SetWindowFullscreen(m_window,0);
             if(flag == SDL_WINDOW_FULLSCREEN_DESKTOP)
@@ -47,11 +47,11 @@ namespace SDL
     {
         Uint32 flags = SDL_GetWindowFlags(m_window);
 
-        if(flags & SDL_WINDOW_BORDERLESS && b)
+        if((flags & SDL_WINDOW_BORDERLESS) && b)
         {
             return;
         }
-        else if(flags & SDL_WINDOW_BORDERLESS && !b)
+        else if((flags & SDL_WINDOW_BORDERLESS) && !b)
         {
             SDL_SetWindowBordered(m_window,SDL_FALSE);
         }

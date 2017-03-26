@@ -1,5 +1,5 @@
-#include "TextActor.h"
-#include "MainClass.h"
+#include <TextActor.h>
+#include <MainClass.h>
 #include <iostream>
 
 namespace SDL

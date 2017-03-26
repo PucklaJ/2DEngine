@@ -1,8 +1,14 @@
-#include "Camera.h"
-#include "LogManager.h"
-#include "MainClass.h"
-#include "GUI_Element.h"
+#include <Camera.h>
+#include <LogManager.h>
+#include <MainClass.h>
+#include <GUI_Element.h>
 #include <iostream>
+
+/*
+ * Camera.cpp
+ * File
+ */
+
 namespace SDL
 {
     Camera::Camera(int order) : Actor(order,"Camera")

@@ -1,7 +1,7 @@
-#include "PhysicsSprite.h"
-#include "LogManager.h"
-#include "MainClass.h"
-#include "Physics.h"
+#include <PhysicsSprite.h>
+#include <LogManager.h>
+#include <MainClass.h>
+#include <Physics.h>
 
 namespace SDL
 {

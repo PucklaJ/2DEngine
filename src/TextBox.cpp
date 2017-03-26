@@ -1,5 +1,5 @@
-#include "TextBox.h"
-#include "GUI.h"
+#include <TextBox.h>
+#include <GUI.h>
 #ifdef __linux__
     #include <SDL2/SDL_ttf.h>
 #else
@@ -10,8 +10,8 @@
 #endif
 #endif
 #include <iostream>
-#include "MainClass.h"
-#include "Camera.h"
+#include <MainClass.h>
+#include <Camera.h>
 
 namespace SDL
 {
@@ -22,7 +22,10 @@ namespace SDL
         m_textColor(tColor),
         m_textSurface(nullptr),
         m_textTexture(nullptr),
-        m_font(font)
+        m_font(font),
+		m_backGround(nullptr),
+		m_needsTextUpdate(false)
+
     {
         //ctor
     }

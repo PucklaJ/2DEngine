@@ -1,6 +1,6 @@
-#include "Light.h"
-#include "Colors.h"
-#include "MainClass.h"
+#include <Light.h>
+#include <Colors.h>
+#include <MainClass.h>
 #include <iostream>
 
 namespace SDL

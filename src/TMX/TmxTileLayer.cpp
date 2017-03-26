@@ -34,11 +34,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "TMX/TmxLayer.h"
-#include "TMX/TmxTileLayer.h"
-#include "TMX/TmxUtil.h"
-#include "TMX/TmxMap.h"
-#include "TMX/TmxTileset.h"
+#include <TMX/TmxLayer.h>
+#include <TMX/TmxTileLayer.h>
+#include <TMX/TmxUtil.h>
+#include <TMX/TmxMap.h>
+#include <TMX/TmxTileset.h>
 
 namespace Tmx 
 {

@@ -7,17 +7,20 @@
 namespace SDL
 {
     TextureHandle::TextureHandle(SDL_Texture* tex) :
-    m_texture(tex)
+    m_texture(tex),
+	m_pitch(0)
     {
         
     }
     
-    TextureHandle::TextureHandle(SDL_Renderer* r,Uint32 f,int a,int w ,int h)
+    TextureHandle::TextureHandle(SDL_Renderer* r,Uint32 f,int a,int w ,int h) :
+    		m_pitch(0)
     {
         m_texture = SDL_CreateTexture(r,f,a,w,h);
     }
     
-    TextureHandle::TextureHandle(SDL_Renderer* r,SDL_Surface* s)
+    TextureHandle::TextureHandle(SDL_Renderer* r,SDL_Surface* s) :
+    		m_pitch(0)
     {
         m_texture = SDL_CreateTextureFromSurface(r,s);
     }

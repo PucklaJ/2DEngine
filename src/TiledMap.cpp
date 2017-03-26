@@ -1,10 +1,10 @@
-#include "TiledMap.h"
-#include "LogManager.h"
-#include "operators.h"
-#include "MainClass.h"
-#include "ResourceManager.h"
+#include <TiledMap.h>
+#include <LogManager.h>
+#include <operators.h>
+#include <MainClass.h>
+#include <ResourceManager.h>
 #include <iostream>
-#include "mathematics.h"
+#include <mathematics.h>
 #include <Box2D/Box2D.h>
 #include <SDL2_gfxPrimitives.h>
 

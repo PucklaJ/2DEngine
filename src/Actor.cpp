@@ -1,9 +1,9 @@
-#include "Actor.h"
+#include <Actor.h>
 #include <cstdlib>
 #include <algorithm>
-#include "Camera.h"
-#include "MainClass.h"
-#include "LogManager.h"
+#include <Camera.h>
+#include <MainClass.h>
+#include <LogManager.h>
 #include <sstream>
 #include <string>
 #include <iostream>

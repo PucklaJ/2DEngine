@@ -1,9 +1,9 @@
-#include "ParticleEngine.h"
-#include "MainClass.h"
-#include "ResourceManager.h"
-#include "mathematics.h"
+#include <ParticleEngine.h>
+#include <MainClass.h>
+#include <ResourceManager.h>
+#include <mathematics.h>
 #include <iostream>
-#include "TextureHandle.h"
+#include <TextureHandle.h>
 
 namespace SDL
 {

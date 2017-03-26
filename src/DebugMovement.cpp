@@ -1,7 +1,7 @@
-#include "DebugMovement.h"
-#include "MainClass.h"
-#include "InputManager.h"
-#include "Camera.h"
+#include <DebugMovement.h>
+#include <MainClass.h>
+#include <InputManager.h>
+#include <Camera.h>
 
 namespace SDL
 {

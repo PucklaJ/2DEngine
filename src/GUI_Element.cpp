@@ -1,5 +1,5 @@
-#include "GUI_Element.h"
-#include "GUI.h"
+#include <GUI_Element.h>
+#include <GUI.h>
 #include <iostream>
 #include <cstdlib>
 #include <algorithm>

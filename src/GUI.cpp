@@ -1,9 +1,9 @@
-#include "GUI.h"
-#include "GUI_Element.h"
-#include "MainClass.h"
+#include <GUI.h>
+#include <GUI_Element.h>
+#include <MainClass.h>
 #include <iostream>
-#include "LogManager.h"
-#include "Camera.h"
+#include <LogManager.h>
+#include <Camera.h>
 
 namespace SDL
 {

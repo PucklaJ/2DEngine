@@ -11,7 +11,8 @@
 namespace SDL
 {
     Tween::Tween(double time) :
-        m_time(time)
+        m_time(time),
+		m_parent(nullptr)
     {
         //ctor
     }
@@ -73,14 +74,18 @@ namespace SDL
         m_x(x),
         m_y(y),
         m_loop(loop),
-        m_customTime(customTime)
+        m_customTime(customTime),
+		m_sprParent(nullptr)
     {
         
     }
     
     AnimationTween::AnimationTween(const std::vector<TextureHandle*>& texs,double time,bool loop,bool customTime) : Tween(time),
         m_loop(loop),
-        m_customTime(customTime)
+        m_customTime(customTime),
+		m_x(0),
+		m_y(0),
+		m_sprParent(nullptr)
     {
         m_textures = new std::vector<TextureHandle*>();
         

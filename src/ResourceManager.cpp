@@ -1,4 +1,4 @@
-#include "ResourceManager.h"
+#include <ResourceManager.h>
 #ifndef __APPLE__
 #include <SDL2/SDL_image.h>
 #else
@@ -7,9 +7,9 @@
 #include <iostream>
 #include "MainClass.h"
 #include <cstdio>
-#include "LogManager.h"
-#include "TextureHandle.h"
-#include "mathematics.h"
+#include <LogManager.h>
+#include <TextureHandle.h>
+#include <mathematics.h>
 
 namespace SDL
 {

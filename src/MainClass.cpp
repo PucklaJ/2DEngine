@@ -1,4 +1,4 @@
-#include "MainClass.h"
+#include <MainClass.h>
 #include <SDL2/SDL.h>
 #ifndef __APPLE__
 #include <SDL2/SDL_image.h>
@@ -8,16 +8,16 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstdio>
-#include "InputManager.h"
-#include "ResourceManager.h"
-#include "Physics.h"
-#include "Camera.h"
-#include "LogManager.h"
-#include "JoystickManager.h"
-#include "operators.h"
-#include "TextureHandle.h"
-#include "Colors.h"
-#include "Sprite.h"
+#include <InputManager.h>
+#include <ResourceManager.h>
+#include <Physics.h>
+#include <Camera.h>
+#include <LogManager.h>
+#include <JoystickManager.h>
+#include <operators.h>
+#include <TextureHandle.h>
+#include <Colors.h>
+#include <Sprite.h>
 
 using namespace std;
 
@@ -28,7 +28,9 @@ namespace SDL
     MainClass::MainClass(const char* title,int width,int height) : Actor(0,"MainClass"),
                                                                    m_windowTitle(title),
                                                                    m_windowWidth(width),
-                                                                   m_windowHeight(height)
+                                                                   m_windowHeight(height),
+																   m_scaleH(1.0f),
+																   m_scaleW(1.0f)
     {
         if(instance == nullptr)
         {

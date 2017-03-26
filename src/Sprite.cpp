@@ -1,12 +1,12 @@
-#include "Sprite.h"
-#include "MainClass.h"
-#include "ResourceManager.h"
+#include <Sprite.h>
+#include <MainClass.h>
+#include <ResourceManager.h>
 #include <SDL2/SDL.h>
 #include <iostream>
-#include "LogManager.h"
-#include "operators.h"
+#include <LogManager.h>
+#include <operators.h>
 #include <SDL2_gfxPrimitives.h>
-#include "Colors.h"
+#include <Colors.h>
 
 namespace SDL
 {
