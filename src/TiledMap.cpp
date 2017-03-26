@@ -14,7 +14,6 @@ namespace SDL
 {
     TiledMap::TiledMap(const std::string& file) : Sprite(0)
     {
-        LogManager::log("TiledMap Constructor");
         m_tmxMap = new Tmx::Map();
         m_tmxMap->ParseFile(file);
         
@@ -213,12 +212,12 @@ namespace SDL
         TextureHandle* texture;
         SDL_Rect dst,src;
         
-        std::cout << "-- TileLayer --" << std::endl;
+        /*std::cout << "-- TileLayer --" << std::endl;
         std::cout << "+ ZOrder: " << tileLayer->GetZOrder() << std::endl;
         std::cout << "+ Opacity: " << tileLayer->GetOpacity() << std::endl;
         std::cout << "+ X: " << tileLayer->GetX() << std::endl;
         std::cout << "+ Y: " << tileLayer->GetY() << std::endl;
-        std::cout << "+ ParseOrder: " << tileLayer->GetParseOrder() << std::endl;
+        std::cout << "+ ParseOrder: " << tileLayer->GetParseOrder() << std::endl;*/
         
         for(int y = 0;y < tileLayer->GetHeight();y++)
         {
@@ -279,13 +278,13 @@ namespace SDL
         SDL_Rect dst,src;
         TextureHandle* texture;
         
-        std::cout << "-- ObjectGroup --" << std::endl;
+        /*std::cout << "-- ObjectGroup --" << std::endl;
         std::cout << "+ ParseOrder: " << objectGroup->GetParseOrder() << std::endl;
         std::cout << "+ Color: " << objectGroup->GetColor() << std::endl;
         std::cout << "+ X: " << objectGroup->GetX() << std::endl;
         std::cout << "+ Y: " << objectGroup->GetY() << std::endl;
         std::cout << "+ Opacity:" << objectGroup->GetOpacity() << std::endl;
-        std::cout << "+ ZOrder: " << objectGroup->GetZOrder() << std::endl;
+        std::cout << "+ ZOrder: " << objectGroup->GetZOrder() << std::endl;*/
         
         for(int j = 0;j<objectGroup->GetNumObjects();j++)
         {
@@ -293,21 +292,21 @@ namespace SDL
             if(!obj->IsVisible())
                 continue;
             
-            std::cout << "-- Object --" << std::endl;
+            /*std::cout << "-- Object --" << std::endl;
             std::cout << "+ Position: " << obj->GetX() << "; " << obj->GetY() << std::endl;
             std::cout << "+ Rotation: " << obj->GetRot() << std::endl;
             std::cout << "+ Height: " << obj->GetHeight() << std::endl;
             std::cout << "+ Width: " << obj->GetWidth() << std::endl;
             std::cout << "+ Name: " << obj->GetName() << std::endl;
             std::cout << "+ Typ: " << obj->GetType() << std::endl;
-            std::cout << "+ GID: " << obj->GetGid() << std::endl;
+            std::cout << "+ GID: " << obj->GetGid() << std::endl;*/
             if(obj->GetEllipse())
             {
-                std::cout << "+ Ellipse" << std::endl;
+                //std::cout << "+ Ellipse" << std::endl;
                 const Tmx::Ellipse* ellipse = obj->GetEllipse();
                 SDL_Color color = colorStringToColor(objectGroup->GetColor());
-                std::cout << "++ Center: " << ellipse->GetCenterX() << "; " << ellipse->GetCenterY() << std::endl;
-                std::cout << "++ Radius: " << ellipse->GetRadiusX() << "; " << ellipse->GetRadiusY() << std::endl;
+                /*std::cout << "++ Center: " << ellipse->GetCenterX() << "; " << ellipse->GetCenterY() << std::endl;
+                std::cout << "++ Radius: " << ellipse->GetRadiusX() << "; " << ellipse->GetRadiusY() << std::endl;*/
                 
                 aaellipseRGBA(m_mainClass->getRenderer(),ellipse->GetCenterX(),ellipse->GetCenterY(),ellipse->GetRadiusX(),ellipse->GetRadiusY(),color.r,color.g,color.b,(Uint8)(objectGroup->GetOpacity()*255.0f));
                 filledEllipseRGBA(m_mainClass->getRenderer(),ellipse->GetCenterX(),ellipse->GetCenterY(),ellipse->GetRadiusX(),ellipse->GetRadiusY(),color.r,color.g,color.b,(Uint8)(objectGroup->GetOpacity()*255.0f/4.0f));
@@ -316,10 +315,10 @@ namespace SDL
             }
             else if(obj->GetPolygon())
             {
-                std::cout << "+ Polygon" << std::endl;
+                //std::cout << "+ Polygon" << std::endl;
                 const Tmx::Polygon* polygon = obj->GetPolygon();
                 SDL_Color color = colorStringToColor(objectGroup->GetColor());
-                std::cout << "++ Points" << std::endl;
+                //std::cout << "++ Points" << std::endl;
                 
                 Sint16 vx[polygon->GetNumPoints()];
                 Sint16 vy[polygon->GetNumPoints()];
@@ -327,11 +326,11 @@ namespace SDL
                 for(int k = 0;k<polygon->GetNumPoints();k++)
                 {
                     const Tmx::Point& point = polygon->GetPoint(k);
-                    std::cout << "+++ " << k+1 << ". " << point.x << "; " << point.y << std::endl;
+                    //std::cout << "+++ " << k+1 << ". " << point.x << "; " << point.y << std::endl;
                     vx[k] = obj->GetX()+point.x;
                     vy[k] = obj->GetY()+point.y;
                     
-                    std::cout << "+++ vx: " << vx[k] << "; vy: " << vy[k] << std::endl;
+                    //std::cout << "+++ vx: " << vx[k] << "; vy: " << vy[k] << std::endl;
                 }
                 
                 for(int k = 0;k<polygon->GetNumPoints();k++)
@@ -353,17 +352,17 @@ namespace SDL
             }
             else if(obj->GetPolyline())
             {
-                std::cout << "+ Polyline" << std::endl;
+                //std::cout << "+ Polyline" << std::endl;
                 const Tmx::Polyline* polyline = obj->GetPolyline();
                 SDL_Color color = colorStringToColor(objectGroup->GetColor());
-                std::cout << "++ Points" << std::endl; 
+                //std::cout << "++ Points" << std::endl; 
                 for(int k = 0;k<polyline->GetNumPoints();k++)
                 {
                     if(k!=0)
                     {
                         const Tmx::Point& point1 = polyline->GetPoint(k-1);
                         const Tmx::Point& point2 = polyline->GetPoint(k);
-                        std::cout << "+++ " << k << ". " << point1.x << "; " << point1.y << std::endl;
+                        //std::cout << "+++ " << k << ". " << point1.x << "; " << point1.y << std::endl;
                         
                         aalineRGBA(m_mainClass->getRenderer(),point1.x+obj->GetX(),point1.y+obj->GetY(),point2.x+obj->GetX(),point2.y+obj->GetY(),color.r,color.g,color.b,(Uint8)(objectGroup->GetOpacity()*255.0f));
                     }
@@ -377,7 +376,7 @@ namespace SDL
             const Tmx::Tileset* gidTileSet = getTileset(GID);
             if(gidTileSet)
             {
-                std::cout << "+ Tile" << std::endl;
+                //std::cout << "+ Tile" << std::endl;
                 
                 getSrcRectForTileGID(&src,GID);
                 dst.x = obj->GetX();
@@ -417,7 +416,7 @@ namespace SDL
     
     void TiledMap::loadCollisionObjects(const Tmx::Tile* tile,int x,int y)
     {
-        std::cout << "+++++++++++++ Collision Objects: " << tile->GetNumObjects() << std::endl;
+        //std::cout << "+++++++++++++ Collision Objects: " << tile->GetNumObjects() << std::endl;
         
         if(!m_mainClass->getPhysics())
             m_mainClass->activatePhysics();
@@ -426,7 +425,7 @@ namespace SDL
         {
             const Tmx::Object* obj = tile->GetObject(i);
             
-            std::cout << "--------------- Object ---" << std::endl;
+            /*std::cout << "--------------- Object ---" << std::endl;
             std::cout << "+++++++++++++++ Position: " << obj->GetX() << "; " << obj->GetY() << std::endl;
             std::cout << "+++++++++++++++ Rotation: " << obj->GetRot() << std::endl;
             std::cout << "+++++++++++++++ Height: " << obj->GetHeight() << std::endl;
@@ -434,15 +433,15 @@ namespace SDL
             std::cout << "+++++++++++++++ Name: " << obj->GetName() << std::endl;
             std::cout << "+++++++++++++++ Typ: " << obj->GetType() << std::endl;
             std::cout << "+++++++++++++++ GID: " << obj->GetGid() << std::endl;
-            std::cout << "+++++++++++++++ Visible: " << obj->IsVisible() << std::endl;
+            std::cout << "+++++++++++++++ Visible: " << obj->IsVisible() << std::endl;*/
             
             if(obj->GetEllipse())
             {
-                std::cout << "+++++++++++++++ Ellipse" << std::endl;
+                //std::cout << "+++++++++++++++ Ellipse" << std::endl;
                 const Tmx::Ellipse* ellipse = obj->GetEllipse();
                 SDL_Color color = {255,255,255,255};
-                std::cout << "++++++++++++++++ Center: " << ellipse->GetCenterX() << "; " << ellipse->GetCenterY() << std::endl;
-                std::cout << "++++++++++++++++ Radius: " << ellipse->GetRadiusX() << "; " << ellipse->GetRadiusY() << std::endl;
+                /*std::cout << "++++++++++++++++ Center: " << ellipse->GetCenterX() << "; " << ellipse->GetCenterY() << std::endl;
+                std::cout << "++++++++++++++++ Radius: " << ellipse->GetRadiusX() << "; " << ellipse->GetRadiusY() << std::endl;*/
                 
                 if(false && obj->IsVisible())
                 {
@@ -465,10 +464,10 @@ namespace SDL
             }
             else if(obj->GetPolygon())
             {
-                std::cout << "+++++++++++++++ Polygon" << std::endl;
+                //std::cout << "+++++++++++++++ Polygon" << std::endl;
                 const Tmx::Polygon* polygon = obj->GetPolygon();
                 SDL_Color color = {255,255,255,255};
-                std::cout << "++++++++++++++++ Points" << std::endl;
+                //std::cout << "++++++++++++++++ Points" << std::endl;
                 
                 Sint16 vx[polygon->GetNumPoints()];
                 Sint16 vy[polygon->GetNumPoints()];
@@ -476,11 +475,11 @@ namespace SDL
                 for(int k = 0;k<polygon->GetNumPoints();k++)
                 {
                     const Tmx::Point& point = polygon->GetPoint(k);
-                    std::cout << "+++++++++++++++++ " << k+1 << ". " << point.x << "; " << point.y << std::endl;
+                    //std::cout << "+++++++++++++++++ " << k+1 << ". " << point.x << "; " << point.y << std::endl;
                     vx[k] = obj->GetX()+point.x+x;
                     vy[k] = obj->GetY()+point.y+y;
                     
-                    std::cout << "+++++++++++++++++ vx: " << vx[k] << "; vy: " << vy[k] << std::endl;
+                    //std::cout << "+++++++++++++++++ vx: " << vx[k] << "; vy: " << vy[k] << std::endl;
                 }
                 
                 if(false && obj->IsVisible())
@@ -509,17 +508,17 @@ namespace SDL
             }
             else if(obj->GetPolyline())
             {
-                std::cout << "+++++++++++++++ Polyline" << std::endl;
+                //std::cout << "+++++++++++++++ Polyline" << std::endl;
                 const Tmx::Polyline* polyline = obj->GetPolyline();
                 SDL_Color color = {255,255,255,255};
-                std::cout << "++++++++++++++++ Points" << std::endl; 
+                //std::cout << "++++++++++++++++ Points" << std::endl; 
                 for(int k = 0;k<polyline->GetNumPoints();k++)
                 {
                     if(k!=0)
                     {
                         const Tmx::Point& point1 = polyline->GetPoint(k-1);
                         const Tmx::Point& point2 = polyline->GetPoint(k);
-                        std::cout << "+++++++++++++++++ " << k << ". " << point1.x << "; " << point1.y << std::endl;
+                        //std::cout << "+++++++++++++++++ " << k << ". " << point1.x << "; " << point1.y << std::endl;
                         
                         if(false && obj->IsVisible())
                             aalineRGBA(m_mainClass->getRenderer(),
@@ -537,7 +536,7 @@ namespace SDL
             {
                 SDL_Color color = {255,255,255,255};
             
-                std::cout << "+++++++++++++++ Rectangle" << std::endl;
+                //std::cout << "+++++++++++++++ Rectangle" << std::endl;
                 
                 if(false && obj->IsVisible())
                 {
@@ -579,6 +578,7 @@ namespace SDL
         fdef[0].density = 6.0f;
         fdef[0].friction = 0.0f;
         fdef[0].restitution = 0.0f;
+        fdef[0].filter.categoryBits = 1;
         
         body = m_mainClass->getPhysics()->getWorld()->CreateBody(&bdef);
         
@@ -674,11 +674,12 @@ namespace SDL
         bdef.type = b2_staticBody;
         bdef.position = m_mainClass->getPhysics()->coordsPixelToWorld(Vector2((double)x+(double)obj->GetX()+(double)obj->GetWidth()/2.0,(double)y+(double)obj->GetY()+(double)obj->GetHeight()/2.0));
         
-        std::cout << "Create Rectangle at " << Vector2((double)x+(double)obj->GetX()+(double)obj->GetWidth()/2.0,(double)y+(double)obj->GetY()+(double)obj->GetHeight()/2.0) << std::endl;
+        //std::cout << "Create Rectangle at " << Vector2((double)x+(double)obj->GetX()+(double)obj->GetWidth()/2.0,(double)y+(double)obj->GetY()+(double)obj->GetHeight()/2.0) << std::endl;
         
         fdef.density = 6.0f;
         fdef.friction = 1.0f;
         fdef.restitution = 0.0f;
+        fdef.filter.categoryBits = 1;
         
         shape.SetAsBox(m_mainClass->getPhysics()->scalarPixelToWorld((double)obj->GetWidth()/2.0),m_mainClass->getPhysics()->scalarPixelToWorld((double)obj->GetHeight()/2.0));
         fdef.shape = &shape;

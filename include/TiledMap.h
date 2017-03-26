@@ -19,6 +19,7 @@ namespace SDL
         void quit() override;
         
         Tmx::Map* getTmxMap() {return m_tmxMap;}
+        std::vector<b2Body*>* getBodies() {return &m_bodies;}
         
     private:
         int getIDofTileset(const Tmx::Tileset*);

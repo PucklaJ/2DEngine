@@ -25,6 +25,7 @@ namespace SDL
         void set(double x,double y) {m_x=x;m_y=y;}
         
         const Vector2& normalise();
+        static double distance(const Vector2&,const Vector2&,bool sqrd = false);
         
         bool isOnScreen(MainClass* c = nullptr);
 

@@ -28,6 +28,21 @@ namespace SDL
         return *this;
     }
     
+    double Vector2::distance(const Vector2& v1,const Vector2& v2,bool sqrd)
+    {
+        Vector2 vd = v2;
+        vd -= v1;
+        
+        if(sqrd)
+        {
+            return vd.getX() * vd.getX() + vd.getY() * vd.getY();
+        }
+        else
+        {
+            return sqrt(vd.getX() * vd.getX() + vd.getY() * vd.getY());
+        }
+    }
+    
     bool Vector2::isOnScreen(MainClass* m)
     {
         if(m_x < 0 || m_y < 0 || m_x > (m == nullptr ? MainClass::getInstance() : m)->getNativeRes().getX() || m_y > (m == nullptr ? MainClass::getInstance() : m)->getNativeRes().getY())
