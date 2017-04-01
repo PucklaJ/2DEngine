@@ -29,8 +29,9 @@ namespace SDL
                                                                    m_windowTitle(title),
                                                                    m_windowWidth(width),
                                                                    m_windowHeight(height),
-																   m_scaleH(1.0f),
-																   m_scaleW(1.0f)
+																   m_scaleW(1.0f),
+																   m_scaleH(1.0f)
+
     {
         if(instance == nullptr)
         {
@@ -63,7 +64,7 @@ namespace SDL
 
             m_all_quit();
         }
-        catch(exception e)
+        catch(exception& e)
         {
             cout << "An error accoured!" << endl << e.what() << endl;
         }
@@ -233,7 +234,7 @@ namespace SDL
                     SDL_RenderCopy(m_renderer,m_backBuffer,nullptr,m_scaleToResolution ? &m_backBufferDst : &m_dstRect);
 
                     SDL_RenderPresent(m_renderer);
-                    SDL_SetRenderDrawColor(m_renderer,m_ambientLight.r,m_ambientLight.g,m_ambientLight.b,m_ambientLight.a);
+                    SDL_SetRenderDrawColor(m_renderer,m_backgroundColor.r,m_backgroundColor.g,m_backgroundColor.b,m_backgroundColor.a);
                     SDL_RenderClear(m_renderer);
 
                     SDL_SetRenderTarget(m_renderer,m_backBuffer);
@@ -711,5 +712,10 @@ namespace SDL
         SDL_SetRenderTarget(m_renderer,nullptr);
         SDL_RenderSetViewport(m_renderer,rect);
         SDL_SetRenderTarget(m_renderer,m_backBuffer);
+    }
+
+    void MainClass::setBackgroundColor(const SDL_Color& col)
+    {
+    	m_backgroundColor = col;
     }
 }

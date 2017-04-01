@@ -36,8 +36,9 @@ namespace SDL
 
             void setTimeScale(double d){m_timeScale = d;}
             void setMaxFPS(int);
-            void setAmbientLight(const SDL_Color& col);
+            void setAmbientLight(const SDL_Color&);
             void setNativeRes(const Vector2& v);
+            void setBackgroundColor(const SDL_Color&);
 
             static MainClass* getInstance() {return instance;}
 
@@ -60,6 +61,7 @@ namespace SDL
             double getFPS() const {return m_fps;}
             const SDL_Color& getAmbientLight() const {return m_ambientLight;}
             Sprite* getAmbientSprite();
+            const SDL_Color& getBackgroundColor() const {return m_backgroundColor;}
 
             void activatePhysics(const Vector2& gravity = Vector2(0.0,-10.0),const Vector2& worldSize = Vector2(NORM_W,NORM_H));
             
@@ -144,6 +146,7 @@ namespace SDL
             
             FPSmanager m_fpsManager;
             
+            SDL_Color m_backgroundColor;
             SDL_Color m_ambientLight;
             Sprite* m_ambientSprite = nullptr;
         

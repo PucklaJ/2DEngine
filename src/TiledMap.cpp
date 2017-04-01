@@ -12,17 +12,17 @@
 
 namespace SDL
 {
-    TiledMap::TiledMap(const std::string& file) : Sprite(0)
+    TiledMap::TiledMap(const std::string& file) : Sprite(0),Tmx::Map()
     {
-        m_tmxMap = new Tmx::Map();
-        m_tmxMap->ParseFile(file);
+        ParseFile(file);
         
-        if(m_tmxMap->HasError())
+        if(HasError())
         {
-            LogManager::log(std::string("TiledMap Error (") + m_tmxMap->GetErrorCode() + ") : " + m_tmxMap->GetErrorText());
-            delete m_tmxMap;
-            m_tmxMap = nullptr;
+            LogManager::log(std::string("TiledMap Error (") + GetErrorCode() + ") : " + GetErrorText());
+            m_works = false;
         }
+
+        m_renderChildrenAfter = true;
     }
     
     TiledMap::~TiledMap()
@@ -34,13 +34,13 @@ namespace SDL
     {
         colorStringToColor("#ffaadd");
         
-        if(m_tmxMap)
+        if(m_works)
         {
             LogManager::log("Loading Map...");
             
-            if(m_tmxMap->GetOrientation() != Tmx::MapOrientation::TMX_MO_ORTHOGONAL)
+            if(GetOrientation() != Tmx::MapOrientation::TMX_MO_ORTHOGONAL)
             {
-                LogManager::log(std::string("This Orientation is not supported (") + m_tmxMap->GetOrientation() + ")");
+                LogManager::log(std::string("This Orientation is not supported (") + GetOrientation() + ")");
                 return true;
             }
             
@@ -156,9 +156,9 @@ namespace SDL
     
     void TiledMap::loadTexture()
     {
-        m_background = colorStringToColor(m_tmxMap->GetBackgroundColor());
+        m_background = colorStringToColor(GetBackgroundColor());
         
-        m_texture = new TextureHandle(m_mainClass->getRenderer(),m_mainClass->getWindow()->getPixelFormat(),SDL_TEXTUREACCESS_TARGET,m_tmxMap->GetWidth() * m_tmxMap->GetTileWidth(),m_tmxMap->GetHeight() * m_tmxMap->GetTileHeight());
+        m_texture = new TextureHandle(m_mainClass->getRenderer(),m_mainClass->getWindow()->getPixelFormat(),SDL_TEXTUREACCESS_TARGET,GetWidth() * GetTileWidth(),GetHeight() * GetTileHeight());
         m_texture->setBlendMode(SDL_BLENDMODE_BLEND);
         m_texture->setRenderTarget(m_mainClass->getRenderer());
         SDL_SetRenderDrawBlendMode(m_mainClass->getRenderer(),SDL_BLENDMODE_BLEND);
@@ -170,39 +170,50 @@ namespace SDL
     {
         LogManager::log("Loading Tilesets...");
         
-        m_tilesX = new int[m_tmxMap->GetNumTilesets()];
+        m_tilesX = new int[GetNumTilesets()];
             
-        for(int i = 0;i<m_tmxMap->GetNumTilesets();i++)
+        for(int i = 0;i<GetNumTilesets();i++)
         {
-            const Tmx::Tileset* tileSet = m_tmxMap->GetTileset((int)i);
-            std::string imageFile = m_tmxMap->GetFilepath() + m_tmxMap->GetTileset((int)i)->GetImage()->GetSource();
+            const Tmx::Tileset* tileSet = GetTileset((int)i);
+            std::string imageFile = GetFilepath() + GetTileset(i)->GetImage()->GetSource();
             
             m_tilesX[i] = (tileSet->GetImage()->GetWidth()-tileSet->GetMargin()*2+tileSet->GetSpacing())/(tileSet->GetTileWidth()+tileSet->GetSpacing());
         }
     }
     
+    void TiledMap::addTexture()
+    {
+    	SDL_Color nothing = {0,0,0,0};
+    	TextureHandle* texture = Textures::BOX(m_mainClass,Vector2(GetWidth()*GetTileWidth(),GetHeight()*GetTileHeight()),nothing);
+    	m_textures.push_back(texture);
+    }
+
     void TiledMap::loadLayers()
     {
         LogManager::log("Loading Layers..");
             
-        for(int i = 0;i<m_tmxMap->GetNumLayers();i++)
+        for(int i = 0;i<GetNumLayers();i++)
         {
-            switch(m_tmxMap->GetLayer(i)->GetLayerType())
+        	addTexture();
+
+            switch(GetLayer(i)->GetLayerType())
             {
                 case Tmx::LayerType::TMX_LAYERTYPE_TILE:
-                    loadTileLayer(static_cast<const Tmx::TileLayer*>(m_tmxMap->GetLayer(i)));
+                    loadTileLayer(static_cast<const Tmx::TileLayer*>(GetLayer(i)),i);
                     break;
                 case Tmx::LayerType::TMX_LAYERTYPE_OBJECTGROUP:
-                    loadObjectGroup(static_cast<const Tmx::ObjectGroup*>(m_tmxMap->GetLayer(i)));
+                    loadObjectGroup(static_cast<const Tmx::ObjectGroup*>(GetLayer(i)));
                     break;
                 case Tmx::LayerType::TMX_LAYERTYPE_IMAGE_LAYER:
-                    loadImageLayer(static_cast<const Tmx::ImageLayer*>(m_tmxMap->GetLayer(i)));
+                    loadImageLayer(static_cast<const Tmx::ImageLayer*>(GetLayer(i)));
                     break;
             }
         }
+
+        SDL_SetRenderTarget(m_mainClass->getRenderer(),m_mainClass->getBackBuffer());
     }
     
-    void TiledMap::loadTileLayer(const Tmx::TileLayer* tileLayer)
+    void TiledMap::loadTileLayer(const Tmx::TileLayer* tileLayer,int Lindex)
     {
         if(!tileLayer->IsVisible())
             return;
@@ -219,6 +230,8 @@ namespace SDL
         std::cout << "+ Y: " << tileLayer->GetY() << std::endl;
         std::cout << "+ ParseOrder: " << tileLayer->GetParseOrder() << std::endl;*/
         
+        m_textures.back()->setRenderTarget(m_mainClass->getRenderer());
+
         for(int y = 0;y < tileLayer->GetHeight();y++)
         {
             for(int x = 0;x < tileLayer->GetWidth();x++)
@@ -230,16 +243,16 @@ namespace SDL
                 index = tileLayer->GetTileTilesetIndex(x,y);
                 tileID = tileLayer->GetTileId(x,y);
                 
-                const Tmx::Tileset* tileSet = m_tmxMap->GetTileset(index);
-                imageFile = m_tmxMap->GetFilepath() + tileSet->GetImage()->GetSource();
+                const Tmx::Tileset* tileSet = GetTileset(index);
+                imageFile = GetFilepath() + tileSet->GetImage()->GetSource();
                 const Tmx::MapTile& tile = tileLayer->GetTile(x, y);
                 
                 texture = m_mainClass->getResourceManager()->loadTexture(imageFile);
                 
                 getSrcRectForTileID(&src,m_tilesX[index],index,tileID);
                 
-                dst.x = x*m_tmxMap->GetTileWidth();
-                dst.y = y*m_tmxMap->GetTileHeight();
+                dst.x = x*GetTileWidth();
+                dst.y = y*GetTileHeight();
                 dst.w = tileSet->GetTileWidth();
                 dst.h = tileSet->GetTileHeight();
                 
@@ -265,9 +278,11 @@ namespace SDL
                 
                 const Tmx::Tile* ttile = tileSet->GetTile(tileID);
                 if(ttile && (ttile->GetNumObjects() > 0))
-                    loadCollisionObjects(ttile,x*m_tmxMap->GetTileWidth(),y*m_tmxMap->GetTileHeight());
+                    loadCollisionObjects(ttile,x*GetTileWidth(),y*GetTileHeight());
             }
         }
+
+        loadAnimations(tileLayer,Lindex);
     }
     
     void TiledMap::loadObjectGroup(const Tmx::ObjectGroup* objectGroup)
@@ -286,6 +301,8 @@ namespace SDL
         std::cout << "+ Opacity:" << objectGroup->GetOpacity() << std::endl;
         std::cout << "+ ZOrder: " << objectGroup->GetZOrder() << std::endl;*/
         
+        m_textures.back()->setRenderTarget(m_mainClass->getRenderer());
+
         for(int j = 0;j<objectGroup->GetNumObjects();j++)
         {
             const Tmx::Object* obj = objectGroup->GetObject(j);
@@ -384,7 +401,7 @@ namespace SDL
                 dst.w = obj->GetWidth();
                 dst.h = obj->GetHeight();
                 
-                texture = m_mainClass->getResourceManager()->loadTexture(m_tmxMap->GetFilepath() + gidTileSet->GetImage()->GetSource());
+                texture = m_mainClass->getResourceManager()->loadTexture(GetFilepath() + gidTileSet->GetImage()->GetSource());
                 texture->setAlphaMod((Uint8)(objectGroup->GetOpacity()*255.0f));
                 texture->renderCopy(m_mainClass->getRenderer(),&dst,&src);
                 texture->setAlphaMod(255);
@@ -411,7 +428,7 @@ namespace SDL
     
     void TiledMap::loadImageLayer(const Tmx::ImageLayer* imageLayer)
     {
-        
+        m_textures.back()->setRenderTarget(m_mainClass->getRenderer());
     }
     
     void TiledMap::loadCollisionObjects(const Tmx::Tile* tile,int x,int y)
@@ -697,21 +714,21 @@ namespace SDL
         
         int curGID = 0;
         
-        for(int i = 0;i<m_tmxMap->GetNumTilesets();i++)
+        for(int i = 0;i<GetNumTilesets();i++)
         {
-            curGID = m_tmxMap->GetTileset(i)->GetFirstGid();
+            curGID = GetTileset(i)->GetFirstGid();
             
             if(curGID == gid)
             {
-                return m_tmxMap->GetTileset(i);
+                return GetTileset(i);
             }
             else if(i != 0 && curGID > gid)
             {
-                return m_tmxMap->GetTileset(i-1);
+                return GetTileset(i-1);
             }
-            else if(i + 1 == m_tmxMap->GetNumTilesets())
+            else if(i + 1 == GetNumTilesets())
             {
-                return m_tmxMap->GetTileset(i);
+                return GetTileset(i);
             }
         }
         
@@ -738,7 +755,7 @@ namespace SDL
         src->x = id % numTilesX;
         src->y = (id - src->x) / numTilesX;
         
-        const Tmx::Tileset* tileSet = m_tmxMap->GetTileset(index);
+        const Tmx::Tileset* tileSet = GetTileset(index);
         
         src->x = src->x * (tileSet->GetTileWidth()+tileSet->GetSpacing())+tileSet->GetMargin();
         src->y = src->y * (tileSet->GetTileHeight()+tileSet->GetSpacing())+tileSet->GetMargin();
@@ -757,16 +774,127 @@ namespace SDL
         }
     }
     
+    void TiledMap::loadAnimations(const Tmx::TileLayer* layer,int Lindex)
+    {
+    	LogManager::log("Loading Animations...");
+
+    	for(int x = 0;x<layer->GetWidth();x++)
+    	{
+    		for(int y = 0;y<layer->GetHeight();y++)
+    		{
+    			int index = layer->GetTileTilesetIndex(x,y);
+
+    			if(index == -1)
+    				continue;
+
+    			const Tmx::MapTile& mapTile = layer->GetTile(x,y);
+    			const Tmx::Tileset* tileset = GetTileset(index);
+    			const Tmx::Tile* tile = tileset->GetTile(mapTile.id);
+
+    			if(!tile || tile->GetFrameCount() == 0)
+    				continue;
+
+    			if(m_animations.count(tile->GetId()) == 0)
+    			{
+    				const std::vector<Tmx::AnimationFrame>& anims = tile->GetFrames();
+					TextureHandle* texture = m_mainClass->getResourceManager()->loadTexture(GetFilepath() + tileset->GetImage()->GetSource());
+					TileAnimation tileAnim;
+					tileAnim.texture = texture;
+					tileAnim.curRect = 0;
+					tileAnim.curTime = 0;
+
+					for(size_t i = 0;i<anims.size();i++)
+					{
+						SDL_Rect rect;
+						getSrcRectForTileID(&rect,m_tilesX[index],index,anims[i].GetTileID());
+						tileAnim.rects.push_back(rect);
+						tileAnim.times.push_back(anims[i].GetDuration());
+					}
+
+					m_animations.insert(std::pair<int,TileAnimation>(tile->GetId(),tileAnim));
+    			}
+
+    			AnimationTile animTile;
+    			animTile.x = x*GetTileWidth();
+    			animTile.y = y*GetTileHeight();
+    			animTile.layer = Lindex;
+    			animTile.animID = tile->GetId();
+
+    			m_animTiles.push_back(animTile);
+    		}
+    	}
+    }
+
+    void TiledMap::updateAnimations()
+    {
+    	int dMil = (int)(m_mainClass->getDeltaTimeInSeconds()*1000.0);
+
+    	for(std::map<int,TileAnimation>::iterator it = m_animations.begin();it!=m_animations.end();it++)
+    	{
+    		it->second.curTime += dMil;
+    		if(it->second.times[it->second.curRect] <= it->second.curTime)
+    		{
+    			it->second.curTime = 0;
+    			it->second.curRect++;
+    			if(it->second.curRect == it->second.rects.size())
+    				it->second.curRect = 0;
+    		}
+    	}
+    }
+
+    void TiledMap::renderAnimations()
+    {
+    	TileAnimation anim;
+    	SDL_Rect dstRect = {0,0,GetTileWidth(),GetTileHeight()};
+
+    	SDL_SetRenderDrawColor(m_mainClass->getRenderer(),m_background.r,m_background.g,m_background.b,m_background.a);
+    	for(size_t i = 0;i<m_animTiles.size();i++)
+    	{
+    		m_textures[m_animTiles[i].layer]->setRenderTarget(m_mainClass->getRenderer());
+    		anim = m_animations[m_animTiles[i].animID];
+    		dstRect.x = m_animTiles[i].x;
+    		dstRect.y = m_animTiles[i].y;
+    		SDL_RenderFillRect(m_mainClass->getRenderer(),&dstRect);
+    		anim.texture->renderCopy(m_mainClass->getRenderer(),&dstRect,&anim.rects[anim.curRect]);
+    	}
+
+    	SDL_SetRenderTarget(m_mainClass->getRenderer(),m_mainClass->getBackBuffer());
+    }
+
     bool TiledMap::update()
     {
+    	updateAnimations();
+
         return true;
     }
     
+    void TiledMap::renderLayers()
+    {
+    	m_texture->setRenderTarget(m_mainClass->getRenderer());
+    	SDL_SetRenderDrawColor(m_mainClass->getRenderer(),m_background.r,m_background.g,m_background.b,m_background.a);
+    	SDL_RenderClear(m_mainClass->getRenderer());
+
+    	for(size_t i = 0;i<m_textures.size();i++)
+    	{
+    		m_textures[i]->renderCopy(m_mainClass->getRenderer());
+    	}
+
+    	SDL_SetRenderTarget(m_mainClass->getRenderer(),m_mainClass->getBackBuffer());
+    }
+
+    bool TiledMap::render()
+    {
+    	Sprite::render();
+
+    	renderAnimations();
+
+    	renderLayers();
+
+    	return true;
+    }
+
     void TiledMap::quit()
     {
-        delete m_tmxMap;
-        m_tmxMap = nullptr;
-        
         for(size_t i = 0;i<m_bodies.size();i++)
         {
             m_mainClass->getPhysics()->getWorld()->DestroyBody(m_bodies[i]);

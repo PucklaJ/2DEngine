@@ -5,10 +5,27 @@
 #include <string>
 #include <vector>
 #include "Physics.h"
+#include <map>
 
 namespace SDL
 {
-    class TiledMap : public Sprite
+	struct AnimationTile
+	{
+		int x,y;
+		int animID;
+		int layer;
+	};
+
+	struct TileAnimation
+	{
+		std::vector<SDL_Rect> rects;
+		std::vector<int> times;
+		TextureHandle* texture;
+		int curRect;
+		int curTime;
+	};
+
+    class TiledMap : public Sprite, public Tmx::Map
     {
     public:
         TiledMap(const std::string& file);
@@ -16,9 +33,9 @@ namespace SDL
         
         bool init() override;
         bool update() override;
+        bool render() override;
         void quit() override;
         
-        Tmx::Map* getTmxMap() {return m_tmxMap;}
         std::vector<b2Body*>* getBodies() {return &m_bodies;}
         
     private:
@@ -33,7 +50,7 @@ namespace SDL
         void loadTilesets();
         void loadLayers();
         
-        void loadTileLayer(const Tmx::TileLayer*);
+        void loadTileLayer(const Tmx::TileLayer*,int);
         void loadObjectGroup(const Tmx::ObjectGroup*);
         void loadImageLayer(const Tmx::ImageLayer*);
         
@@ -43,10 +60,20 @@ namespace SDL
         void loadCollisionPolyline(const Tmx::Object*,int,int);
         void loadCollisionRectangle(const Tmx::Object*,int,int);
         
-        Tmx::Map* m_tmxMap = nullptr;
+        void loadAnimations(const Tmx::TileLayer*,int);
+        void updateAnimations();
+        void renderAnimations();
+
+        void addTexture();
+        void renderLayers();
+
+        bool m_works = true;
         int* m_tilesX = nullptr;
         SDL_Color m_background;
         std::vector<b2Body*> m_bodies;
+        std::map<int,TileAnimation> m_animations;
+        std::vector<AnimationTile> m_animTiles;
+        std::vector<TextureHandle*> m_textures;
         
     };
 }
