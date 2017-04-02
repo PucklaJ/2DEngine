@@ -666,7 +666,7 @@ namespace SDL
     {
         const Tmx::Polyline* polyline = obj->GetPolyline();
 
-        if(polyline->GetNumPoints() < 3 || polyline->GetNumPoints() > b2_maxPolygonVertices)
+        if(polyline->GetNumPoints() < 2 || polyline->GetNumPoints() > b2_maxPolygonVertices)
 		{
 			LogManager::log(std::string("Polyline (") + x + "; " + y + ") has too much or too few vertices");
 			return;
