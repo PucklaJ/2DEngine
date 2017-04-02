@@ -26,6 +26,7 @@ namespace SDL
     class JoystickManager;
     class TextureHandle;
     class Sprite;
+    class ContactListener;
 
     class MainClass : public Actor
     {
@@ -152,6 +153,7 @@ namespace SDL
             Sprite* m_ambientSprite = nullptr;
         
             Vector2 m_nativeResolution;
+            ContactListener* m_contactListener;
 
     };
 }

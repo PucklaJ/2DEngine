@@ -24,6 +24,12 @@ namespace SDL
         
         void setBody(b2Body* body) {m_body = body;}
         void setAutomaticDestroy(bool b) {m_automaticDestroy = b;}
+
+        virtual void BeginContact(b2Contact*,b2Fixture*,b2Fixture*);
+        virtual void EndContact(b2Contact*,b2Fixture*,b2Fixture*);
+        virtual void PreSolve(b2Contact*,b2Fixture*,b2Fixture*,const b2Manifold*);
+        virtual void PostSolve(b2Contact*,b2Fixture*,b2Fixture*,const b2ContactImpulse*);
+
     protected:
         bool m_automaticDestroy = true;
         

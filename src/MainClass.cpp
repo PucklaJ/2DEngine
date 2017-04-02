@@ -18,6 +18,7 @@
 #include <TextureHandle.h>
 #include <Colors.h>
 #include <Sprite.h>
+#include <ContactListener.h>
 
 using namespace std;
 
@@ -30,7 +31,8 @@ namespace SDL
                                                                    m_windowWidth(width),
                                                                    m_windowHeight(height),
 																   m_scaleW(1.0f),
-																   m_scaleH(1.0f)
+																   m_scaleH(1.0f),
+																   m_contactListener(nullptr)
 
     {
         if(instance == nullptr)
@@ -88,6 +90,18 @@ namespace SDL
         {
             delete m_joystickManager;
             m_joystickManager = nullptr;
+        }
+
+        if(m_physics)
+        {
+        	delete m_physics;
+        	m_physics = nullptr;
+        }
+
+        if(m_contactListener)
+        {
+        	delete m_contactListener;
+        	m_contactListener = nullptr;
         }
 
 
@@ -173,7 +187,7 @@ namespace SDL
         m_dstRect.h = m_nativeResolution.getY();
         
         m_ambientLight = SDL::Colors::WHITE;
-        
+
         LogManager::log("Finished Initializing Engine");
     }
 
@@ -570,6 +584,9 @@ namespace SDL
     void MainClass::activatePhysics(const Vector2& gravity,const Vector2& worldSize)
     {
         m_physics = new Physics(this,gravity,worldSize);
+
+        m_contactListener = new ContactListener();
+        m_physics->getWorld()->SetContactListener(m_contactListener);
     }
     
     void MainClass::onResize(int w,int h)

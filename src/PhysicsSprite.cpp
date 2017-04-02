@@ -2,6 +2,7 @@
 #include <LogManager.h>
 #include <MainClass.h>
 #include <Physics.h>
+#include <iostream>
 
 namespace SDL
 {
@@ -29,6 +30,11 @@ namespace SDL
     {
         if(!Sprite::init())
             return false;
+
+        if(m_body)
+        {
+        	m_body->SetUserData(this);
+        }
             
         return true;
     }
@@ -64,4 +70,21 @@ namespace SDL
         Sprite::m_quit();
         m_mainClass->getPhysics()->getWorld()->DestroyBody(m_body);
     }
+
+    void PhysicsSprite::BeginContact(b2Contact* contact,b2Fixture* self,b2Fixture* other)
+    {
+
+    }
+	void PhysicsSprite::EndContact(b2Contact* contact,b2Fixture* self,b2Fixture* other)
+	{
+
+	}
+	void PhysicsSprite::PreSolve(b2Contact* contact,b2Fixture* self,b2Fixture* other,const b2Manifold* oldManifold)
+	{
+
+	}
+	void PhysicsSprite::PostSolve(b2Contact* contact,b2Fixture* self,b2Fixture* other,const b2ContactImpulse* impulse)
+	{
+
+	}
 }
