@@ -28,6 +28,9 @@ namespace SDL
             b2Vec2 coordsPixelToWorld(const Vector2&);
             Vector2 coordsWorldToPixel(const b2Vec2&);
             
+            b2Vec2 vectorPixelToWorld(const Vector2&);
+            Vector2 vectorWorldToPixel(const b2Vec2&);
+
             double scalarPixelToWorld(double);
             double scalarWorldToPixel(double);
             

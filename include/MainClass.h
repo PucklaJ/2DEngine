@@ -6,6 +6,7 @@
 #include "WindowHandle.h"
 #include <chrono>
 #include <SDL2_framerate.h>
+#include <SDL2/SDL_pixels.h>
 
 #define NO_FPS_LOCK -1
 

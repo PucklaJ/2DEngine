@@ -149,4 +149,14 @@ namespace SDL
         
         return body;
     }
+
+    b2Vec2 Physics::vectorPixelToWorld(const Vector2& v)
+    {
+    	return b2Vec2(v.getX()/m_pixelsPerMetre,-v.getY()/m_pixelsPerMetre);
+    }
+
+    Vector2 Physics::vectorWorldToPixel(const b2Vec2& v)
+    {
+    	return Vector2(v.x*m_pixelsPerMetre,-v.y*m_pixelsPerMetre);
+    }
 }

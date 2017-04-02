@@ -1,6 +1,6 @@
 #ifndef COLORS_H
 #define COLORS_H
-#include <SDL2/SDL.h>
+#include <SDL2/SDL_pixels.h>
 
 namespace SDL
 {

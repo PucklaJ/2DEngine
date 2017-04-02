@@ -7,6 +7,7 @@
 #include <mathematics.h>
 #include <Box2D/Box2D.h>
 #include <SDL2_gfxPrimitives.h>
+#define DRAW_DEBUG
 
 #define GETGID(obj) (obj->GetGid() < 0 ? obj->GetGid()+INT_MAX : obj->GetGid())
 
@@ -454,13 +455,15 @@ namespace SDL
             
             if(obj->GetEllipse())
             {
+#ifdef DRAW_DEBUG
                 //std::cout << "+++++++++++++++ Ellipse" << std::endl;
                 const Tmx::Ellipse* ellipse = obj->GetEllipse();
                 SDL_Color color = {255,255,255,255};
                 /*std::cout << "++++++++++++++++ Center: " << ellipse->GetCenterX() << "; " << ellipse->GetCenterY() << std::endl;
                 std::cout << "++++++++++++++++ Radius: " << ellipse->GetRadiusX() << "; " << ellipse->GetRadiusY() << std::endl;*/
                 
-                if(false && obj->IsVisible())
+
+                if(obj->IsVisible())
                 {
                     aaellipseRGBA(m_mainClass->getRenderer(),
                                   ellipse->GetCenterX()+x,
@@ -475,6 +478,7 @@ namespace SDL
                                       ellipse->GetRadiusY(),
                                       color.r,color.g,color.b,64);
                 }
+#endif
                 
                 loadCollisionEllipse(obj,x,y);
                 
@@ -483,12 +487,12 @@ namespace SDL
             {
                 //std::cout << "+++++++++++++++ Polygon" << std::endl;
                 const Tmx::Polygon* polygon = obj->GetPolygon();
+#ifdef DRAW_DEBUG
                 SDL_Color color = {255,255,255,255};
                 //std::cout << "++++++++++++++++ Points" << std::endl;
                 
                 Sint16 vx[polygon->GetNumPoints()];
                 Sint16 vy[polygon->GetNumPoints()];
-                
                 for(int k = 0;k<polygon->GetNumPoints();k++)
                 {
                     const Tmx::Point& point = polygon->GetPoint(k);
@@ -498,8 +502,7 @@ namespace SDL
                     
                     //std::cout << "+++++++++++++++++ vx: " << vx[k] << "; vy: " << vy[k] << std::endl;
                 }
-                
-                if(false && obj->IsVisible())
+                if(obj->IsVisible())
                 {
                     for(int k = 0;k<polygon->GetNumPoints();k++)
                     {
@@ -520,12 +523,13 @@ namespace SDL
                                       polygon->GetNumPoints(),
                                       color.r,color.g,color.b,64);
                 }
+#endif
                 
                 loadCollisionPolygon(obj,x,y);
             }
             else if(obj->GetPolyline())
             {
-                //std::cout << "+++++++++++++++ Polyline" << std::endl;
+#ifdef DRAW_DEBUG//std::cout << "+++++++++++++++ Polyline" << std::endl;
                 const Tmx::Polyline* polyline = obj->GetPolyline();
                 SDL_Color color = {255,255,255,255};
                 //std::cout << "++++++++++++++++ Points" << std::endl; 
@@ -536,26 +540,28 @@ namespace SDL
                         const Tmx::Point& point1 = polyline->GetPoint(k-1);
                         const Tmx::Point& point2 = polyline->GetPoint(k);
                         //std::cout << "+++++++++++++++++ " << k << ". " << point1.x << "; " << point1.y << std::endl;
-                        
-                        if(false && obj->IsVisible())
+
+                        if(obj->IsVisible())
                             aalineRGBA(m_mainClass->getRenderer(),
                                        point1.x+obj->GetX()+x,
                                        point1.y+obj->GetY()+y,
                                        point2.x+obj->GetX()+x,
                                        point2.y+obj->GetY()+y,
                                        color.r,color.g,color.b,255);
+
                     }
                 }
-                
+#endif
                 loadCollisionPolyline(obj,x,y);
             }
             else
             {
+#ifdef DRAW_DEBUG
                 SDL_Color color = {255,255,255,255};
             
                 //std::cout << "+++++++++++++++ Rectangle" << std::endl;
-                
-                if(false && obj->IsVisible())
+
+                if(obj->IsVisible())
                 {
                     rectangleRGBA(m_mainClass->getRenderer(),
                                   obj->GetX()+x,
@@ -570,6 +576,7 @@ namespace SDL
                             obj->GetY()+obj->GetHeight()+y,
                             color.r,color.g,color.b,64);
                 }
+#endif
                 
                 loadCollisionRectangle(obj,x,y);
             }
@@ -613,28 +620,37 @@ namespace SDL
     
     void TiledMap::loadCollisionPolygon(const Tmx::Object* obj,int x,int y)
     {
-        /*const Tmx::Polygon* polygon = obj->GetPolygon();
+        const Tmx::Polygon* polygon = obj->GetPolygon();
+
+        if(polygon->GetNumPoints() < 3 || polygon->GetNumPoints() > b2_maxPolygonVertices)
+        {
+        	LogManager::log(std::string("Polygon (") + x + "; " + y + ") has too much or too few vertices");
+        	return;
+        }
+
         b2Body* body;
         b2BodyDef bdef;
         b2FixtureDef fdef;
         b2PolygonShape shape;
         b2Vec2 v[polygon->GetNumPoints()];
         
-        bdef.position = m_mainClass->getPhysics()->coordsPixelToWorld(Vector2((double)x+(double)obj->GetX()+(double)obj->GetWidth()/2.0,(double)y+(double)obj->GetY()+(double)obj->GetHeight()/2.0));
+        Vector2 pixelPos((double)x+(double)GetTileWidth()/2.0,(double)y+(double)GetTileHeight()/2.0);
+
+        bdef.position = m_mainClass->getPhysics()->coordsPixelToWorld(pixelPos);
         bdef.type = b2_staticBody;
         
-        fdef.density = 6.0f;
-        fdef.friction = 1.0f;
-        fdef.restitution = 0.0f;
-        
+        fdef.density = DEF_DENSITY;
+        fdef.friction = DEF_FRICTION;
+        fdef.restitution = DEF_RESTITUTION;
+
         for(int i = polygon->GetNumPoints()-1;i>=0;i--)
         {
             const Tmx::Point& point = polygon->GetPoint(i);
-            double xb = x + obj->GetX() + point.x;
-            double yb = y + obj->GetY() + point.y;
+            double xb = (double)obj->GetX() + (double)point.x - (double)GetTileWidth()/2.0;
+            double yb = (double)obj->GetY() + (double)point.y - (double)GetTileHeight()/2.0;
             
-            v[polygon->GetNumPoints()-1-i] = m_mainClass->getPhysics()->coordsPixelToWorld(Vector2(xb,yb));
-        }
+            v[polygon->GetNumPoints()-1-i] = m_mainClass->getPhysics()->vectorPixelToWorld(Vector2(xb,yb));
+         }
         
         shape.Set(v,polygon->GetNumPoints());
         
@@ -643,31 +659,37 @@ namespace SDL
         body = m_mainClass->getPhysics()->getWorld()->CreateBody(&bdef);
         body->CreateFixture(&fdef);
         
-        m_bodies.push_back(body); TODO*/
+        m_bodies.push_back(body);
     }
     
     void TiledMap::loadCollisionPolyline(const Tmx::Object* obj,int x,int y)
     {
-        /*const Tmx::Polyline* polyline = obj->GetPolyline();
+        const Tmx::Polyline* polyline = obj->GetPolyline();
+
+        if(polyline->GetNumPoints() < 3 || polyline->GetNumPoints() > b2_maxPolygonVertices)
+		{
+			LogManager::log(std::string("Polyline (") + x + "; " + y + ") has too much or too few vertices");
+			return;
+		}
+
         b2Body* body;
         b2BodyDef bdef;
         b2FixtureDef fdef;
         b2ChainShape shape;
         b2Vec2 v[polyline->GetNumPoints()];
-        
-        bdef.position = m_mainClass->getPhysics()->coordsPixelToWorld(Vector2((double)x+(double)obj->GetX()+(double)obj->GetWidth()/2.0,(double)y+(double)obj->GetY()+(double)obj->GetHeight()/2.0));
+
         bdef.type = b2_staticBody;
-        
-        fdef.density = 6.0f;
-        fdef.friction = 1.0f;
-        fdef.restitution = 0.0f;
+
+        fdef.density = DEF_DENSITY;
+        fdef.friction = DEF_FRICTION;
+        fdef.restitution = DEF_RESTITUTION;
         
         for(int i = polyline->GetNumPoints()-1;i>=0;i--)
         {
             const Tmx::Point& point = polyline->GetPoint(i);
-            double xb = point.x+obj->GetX();
-            double yb = point.y+obj->GetY();
-            
+            double xb = x + point.x + obj->GetX();
+            double yb = y + point.y+ obj->GetY();
+
             v[polyline->GetNumPoints()-1-i] = m_mainClass->getPhysics()->coordsPixelToWorld(Vector2(xb,yb));
         }
         
@@ -678,7 +700,7 @@ namespace SDL
         body = m_mainClass->getPhysics()->getWorld()->CreateBody(&bdef);
         body->CreateFixture(&fdef);
         
-        m_bodies.push_back(body); TODO*/
+        m_bodies.push_back(body);
     }
     
     void TiledMap::loadCollisionRectangle(const Tmx::Object* obj,int x,int y)
@@ -690,8 +712,6 @@ namespace SDL
         
         bdef.type = b2_staticBody;
         bdef.position = m_mainClass->getPhysics()->coordsPixelToWorld(Vector2((double)x+(double)obj->GetX()+(double)obj->GetWidth()/2.0,(double)y+(double)obj->GetY()+(double)obj->GetHeight()/2.0));
-        
-        //std::cout << "Create Rectangle at " << Vector2((double)x+(double)obj->GetX()+(double)obj->GetWidth()/2.0,(double)y+(double)obj->GetY()+(double)obj->GetHeight()/2.0) << std::endl;
         
         fdef.density = 6.0f;
         fdef.friction = 1.0f;
