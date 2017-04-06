@@ -632,7 +632,9 @@ namespace SDL
         b2BodyDef bdef;
         b2FixtureDef fdef;
         b2PolygonShape shape;
-        b2Vec2 v[polygon->GetNumPoints()];
+        b2Vec2* v;
+        
+        v = new b2Vec2[polygon->GetNumPoints()];
         
         Vector2 pixelPos((double)x+(double)GetTileWidth()/2.0,(double)y+(double)GetTileHeight()/2.0);
 
@@ -653,6 +655,8 @@ namespace SDL
          }
         
         shape.Set(v,polygon->GetNumPoints());
+        
+        delete[] v;
         
         fdef.shape = &shape;
         
@@ -676,7 +680,9 @@ namespace SDL
         b2BodyDef bdef;
         b2FixtureDef fdef;
         b2ChainShape shape;
-        b2Vec2 v[polyline->GetNumPoints()];
+        b2Vec2* v;
+        
+        v = new b2Vec2[polyline->GetNumPoints()];
 
         bdef.type = b2_staticBody;
 
@@ -694,6 +700,7 @@ namespace SDL
         }
         
         shape.CreateChain(v,polyline->GetNumPoints());
+        delete[] v;
         
         fdef.shape = &shape;
         

@@ -6,7 +6,6 @@
  */
 #include <ContactListener.h>
 #include <PhysicsSprite.h>
-#include <typeinfo>
 #include <iostream>
 
 namespace SDL
