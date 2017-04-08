@@ -54,6 +54,9 @@ namespace SDL
 
         for(std::size_t i = 0;i<m_tweens.size();i++)
         {
+        	if(m_tweens[i]->isPaused())
+        		continue;
+
             if(m_tweens[i]->update())
             {
                 delete m_tweens[i];
@@ -417,9 +420,6 @@ namespace SDL
         m_dstRect.w = m_size.getX();
         m_dstRect.h = m_size.getY();
 
-
-
-
         if(!m_renderChildrenAfter)
         {
             if(!(m_render() && render()))
@@ -482,11 +482,13 @@ namespace SDL
 
     }
 
-    void Actor::addTween(Tween* t)
+    int Actor::addTween(Tween* t)
     {
         m_tweens.push_back(t);
         t->setParent(this);
         t->init();
+
+        return t->getID();
     }
 
     void Actor::clearTweens()
@@ -497,6 +499,53 @@ namespace SDL
         }
 
         m_tweens.clear();
+    }
+
+    void Actor::pauseTween(int id)
+    {
+    	for(size_t i = 0;i<m_tweens.size();i++)
+    	{
+    		if(m_tweens[i]->getID() == id)
+    		{
+    			m_tweens[i]->setPaused(true);
+    			return;
+    		}
+    	}
+    }
+    void Actor::resumeTween(int id)
+    {
+    	for(size_t i = 0;i<m_tweens.size();i++)
+		{
+			if(m_tweens[i]->getID() == id)
+			{
+				m_tweens[i]->setPaused(false);
+				return;
+			}
+		}
+    }
+    void Actor::stopTween(int id)
+    {
+    	for(size_t i = 0;i<m_tweens.size();i++)
+		{
+			if(m_tweens[i]->getID() == id)
+			{
+				delete m_tweens[i];
+				m_tweens[i] = m_tweens.back();
+				m_tweens.pop_back();
+				return;
+			}
+		}
+    }
+
+    Tween* Actor::getTween(int id)
+    {
+    	for(size_t i = 0;i<m_tweens.size();i++)
+    	{
+    		if(m_tweens[i]->getID() == id)
+    			return m_tweens[i];
+    	}
+
+    	return nullptr;
     }
 
 

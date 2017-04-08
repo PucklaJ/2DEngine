@@ -39,7 +39,7 @@ namespace SDL
             virtual void m_quit();
 
             bool addChild(Actor*,bool instantAdd = true);
-            void addTween(Tween*);
+            int addTween(Tween*);
             void removeChild(Actor*,bool del = true,bool instant = false);
 
             void setParent(Actor*);
@@ -75,6 +75,7 @@ namespace SDL
             const int getID() const {return m_id;}
             const int getPriority() const {return m_priority;}
             std::vector<Tween*>& getTweens() {return m_tweens;}
+            Tween* getTween(int);
 
             bool isChild(Actor*);
 
@@ -88,9 +89,13 @@ namespace SDL
 
             void doThisWithAllChildren(void(*)(Actor*));
             void reorderChildren();
-            void clearTweens();
             
             virtual bool isOnScreen();
+
+            void clearTweens();
+            void pauseTween(int);
+            void resumeTween(int);
+            void stopTween(int);
     protected:
 
             MainClass* m_mainClass = nullptr;

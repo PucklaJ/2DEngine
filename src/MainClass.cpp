@@ -113,6 +113,8 @@ namespace SDL
         SDL_DestroyRenderer(m_renderer);
         delete m_window;
         SDL_Quit();
+
+        delete Colors::m_COLOR_KEY;
     }
 
     void MainClass::m_init()

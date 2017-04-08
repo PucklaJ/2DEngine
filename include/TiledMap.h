@@ -37,6 +37,8 @@ namespace SDL
         void quit() override;
         
         std::vector<b2Body*>* getBodies() {return &m_bodies;}
+        b2Body* toCollisionBody(const Tmx::Object*);
+        void setRenderObjects(bool b) {m_renderObjects = b;}
         
     private:
         int getIDofTileset(const Tmx::Tileset*);
@@ -74,6 +76,7 @@ namespace SDL
         std::map<int,TileAnimation> m_animations;
         std::vector<AnimationTile> m_animTiles;
         std::vector<TextureHandle*> m_textures;
+        bool m_renderObjects = false;
         
     };
 }

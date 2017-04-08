@@ -99,6 +99,8 @@ namespace SDL
     
     namespace Colors
     {
+    	SDL_Color* m_COLOR_KEY = nullptr;
+
         SDL_Color RAND(short r,short g, short b)
         {
             SDL_Color col;
@@ -108,6 +110,21 @@ namespace SDL
             col.a = 255;
             
             return col;
+        }
+
+        SDL_Color* KEY(short r,short g,short b)
+        {
+        	if(!m_COLOR_KEY)
+        	{
+        		m_COLOR_KEY = new SDL_Color();
+        		m_COLOR_KEY->a = 255;
+        	}
+
+        	m_COLOR_KEY->r = r;
+        	m_COLOR_KEY->g = g;
+        	m_COLOR_KEY->b = b;
+
+        	return m_COLOR_KEY;
         }
     }
     
@@ -119,10 +136,11 @@ namespace SDL
         
     }
     
-    Sprite::Sprite(const char* file,int order) : Actor(order,"Sprite"),
+    Sprite::Sprite(const char* file,const SDL_Color* colorKey,int order) : Actor(order,"Sprite"),
         m_srcRect(SDL_Rect()),
         m_rotation(0.0),
-        m_file(file)
+        m_file(file),
+		m_colorKey(colorKey)
 
     {
 
@@ -146,7 +164,7 @@ namespace SDL
         if(!m_texture)
         {
             ResourceManager* res = m_mainClass->getResourceManager();
-            m_texture = res->loadTexture(m_file);
+            m_texture = res->loadTexture(m_file,m_colorKey);
             SDL_QueryTexture(m_texture->getTexture(),nullptr,nullptr,&m_srcRect.w,&m_srcRect.h);
             m_size = Vector2(m_srcRect.w,m_srcRect.h);
         }
@@ -183,20 +201,13 @@ namespace SDL
         
         if(m_texture)
         {
-            if(m_rotation == 0.0 || !((int)m_rotation % 360))
+            if(m_flip == SDL_FLIP_NONE &&  (m_rotation == 0.0 || !((int)m_rotation % 360)))
             {
-                if(m_texture->renderCopy(m_renderer,&m_dstRect,&m_srcRect)<0)
-                {
-                    LogManager::log(std::string("Render Error: ") + SDL_GetError());
-                }
-            
+                m_texture->renderCopy(m_renderer,&m_dstRect,&m_srcRect);
             }
             else
             {
-                if(m_texture->renderCopyEx(m_renderer,m_rotation,&m_dstRect,&m_srcRect)<0)
-                {
-                    LogManager::log(std::string("Render Error: ") + SDL_GetError());
-                }
+                m_texture->renderCopyEx(m_renderer,m_rotation,&m_dstRect,&m_srcRect,nullptr,m_flip);
             }
         }
         

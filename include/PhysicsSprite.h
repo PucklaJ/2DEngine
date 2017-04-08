@@ -11,7 +11,7 @@ namespace SDL
     {
     public:
         PhysicsSprite(b2Body* body = nullptr,int order = 0);
-        PhysicsSprite(const char* file,b2Body* body = nullptr,int order = 0);
+        PhysicsSprite(const char* file,const SDL_Color* colorKey = nullptr,b2Body* body = nullptr,int order = 0);
         PhysicsSprite(TextureHandle*,b2Body* body = nullptr,int order = 0);
         virtual ~PhysicsSprite();
         
@@ -21,9 +21,11 @@ namespace SDL
         
         b2Body* getBody() {return m_body;}
         bool getAutomaticDestroy() {return m_automaticDestroy;}
+        const Vector2& getOffset() const {return m_offset;}
         
-        void setBody(b2Body* body) {m_body = body;}
+        void setBody(b2Body* body) {m_body = body; body->SetUserData(this);}
         void setAutomaticDestroy(bool b) {m_automaticDestroy = b;}
+        void setOffset(const Vector2& v) {m_offset = v;}
 
         virtual void BeginContact(b2Contact*,b2Fixture*,b2Fixture*);
         virtual void EndContact(b2Contact*,b2Fixture*,b2Fixture*);
@@ -32,6 +34,7 @@ namespace SDL
 
     protected:
         bool m_automaticDestroy = true;
+        Vector2 m_offset;
         
     private:
         b2Body* m_body = nullptr;

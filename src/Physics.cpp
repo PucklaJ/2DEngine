@@ -143,11 +143,75 @@ namespace SDL
         bdef.position = coordsPixelToWorld(pos);
         
         shape.m_radius = scalarPixelToWorld(radius);
+        fdef.shape = &shape;
         
         body = m_world->CreateBody(&bdef);
         body->CreateFixture(&fdef);
         
         return body;
+    }
+
+    b2Body* Physics::createCAPSULE(const Vector2& pos,double w,double h,float32 friction,float32 restitution,float32 density,b2BodyType type)
+    {
+    	b2BodyDef bdef;
+    	b2FixtureDef fdef;
+    	b2PolygonShape boxShape;
+    	b2CircleShape cShape1,cShape2;
+    	b2Body* body;
+
+    	bdef.type = type;
+    	bdef.position = coordsPixelToWorld(pos);
+
+    	fdef.friction = friction;
+    	fdef.restitution = restitution;
+    	fdef.density = density;
+
+
+    	boxShape.SetAsBox(w/2.0,h/2.0/2.0);
+    	cShape1.m_p = vectorPixelToWorld(Vector2(0.0,-h/2.0));
+    	cShape1.m_radius = scalarPixelToWorld(w/2.0);
+    	cShape2.m_p = vectorPixelToWorld(Vector2(0.0,h/2.0));
+    	cShape2.m_radius = scalarPixelToWorld(w/2.0);
+
+
+    	fdef.shape = &boxShape;
+    	body = m_world->CreateBody(&bdef);
+    	body->CreateFixture(&fdef);
+
+    	fdef.shape = &cShape1;
+    	body->CreateFixture(&fdef);
+
+    	fdef.shape = &cShape2;
+    	body->CreateFixture(&fdef);
+
+    	return body;
+
+    }
+    b2Body* Physics::createCAPSULE(const Vector2& pos,double w,double h,b2BodyDef& bdef,b2FixtureDef& fdef)
+    {
+    	b2PolygonShape boxShape;
+    	b2CircleShape cShape1,cShape2;
+    	b2Body* body;
+
+    	bdef.position = coordsPixelToWorld(pos);
+
+    	boxShape.SetAsBox(w/2.0,h/2.0/2.0);
+		cShape1.m_p = vectorPixelToWorld(Vector2(0.0,-h/4.0));
+		cShape1.m_radius = scalarPixelToWorld(w/2.0);
+		cShape2.m_p = vectorPixelToWorld(Vector2(0.0,h/4.0));
+		cShape2.m_radius = scalarPixelToWorld(w/2.0);
+
+		fdef.shape = &boxShape;
+		body = m_world->CreateBody(&bdef);
+		body->CreateFixture(&fdef);
+
+		fdef.shape = &cShape1;
+		body->CreateFixture(&fdef);
+
+		fdef.shape = &cShape2;
+		body->CreateFixture(&fdef);
+
+		return body;
     }
 
     b2Vec2 Physics::vectorPixelToWorld(const Vector2& v)

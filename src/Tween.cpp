@@ -10,16 +10,36 @@
 
 namespace SDL
 {
+	std::vector<int> Tween::m_ids;
+
     Tween::Tween(double time) :
         m_time(time),
 		m_parent(nullptr)
     {
-        //ctor
+    	do
+    	{
+    		m_id = rand();
+    	}while(std::count(m_ids.begin(),m_ids.end(),m_id) != 0);
+
+    	m_ids.push_back(m_id);
     }
 
     Tween::~Tween()
     {
-        //dtor
+        quit();
+    }
+
+    void Tween::quit()
+    {
+    	for(size_t i = 0;i<m_ids.size();i++)
+		{
+			if(m_ids[i] == m_id)
+			{
+				m_ids[i] = m_ids.back();
+				m_ids.pop_back();
+				return;
+			}
+		}
     }
 
     void Tween::init()
@@ -39,11 +59,6 @@ namespace SDL
 
     PositionTween::PositionTween(const Vector2& v,double time) : Tween(time),
         m_dstPos(v)
-    {
-
-    }
-
-    PositionTween::~PositionTween()
     {
 
     }
@@ -70,22 +85,23 @@ namespace SDL
     }
     
     AnimationTween::AnimationTween(TextureHandle* atlas,int x, int y,double time,bool loop,bool customTime) : Tween(time),
-        m_atlas(atlas),
+    	m_sprParent(nullptr),
+		m_atlas(atlas),
         m_x(x),
         m_y(y),
         m_loop(loop),
-        m_customTime(customTime),
-		m_sprParent(nullptr)
+        m_customTime(customTime)
+
     {
         
     }
     
     AnimationTween::AnimationTween(const std::vector<TextureHandle*>& texs,double time,bool loop,bool customTime) : Tween(time),
-        m_loop(loop),
-        m_customTime(customTime),
+    	m_sprParent(nullptr),
 		m_x(0),
 		m_y(0),
-		m_sprParent(nullptr)
+		m_loop(loop),
+		m_customTime(customTime)
     {
         m_textures = new std::vector<TextureHandle*>();
         
@@ -96,8 +112,26 @@ namespace SDL
         
     }
     
+    AnimationTween::AnimationTween(const std::vector<SDL_Rect>& rects,double time,bool loop,bool customTime) : Tween(time),
+		m_sprParent(nullptr),
+		m_x(0),
+		m_y(0),
+		m_loop(loop),
+		m_customTime(customTime)
+	{
+		m_rects = new std::vector<SDL_Rect>();
+
+		for(size_t i = 0;i<rects.size();i++)
+		{
+			m_rects->push_back(rects[i]);
+		}
+
+	}
+
     AnimationTween::~AnimationTween()
     {
+    	quit();
+
         if(m_textures)
         {
             for(size_t i = 0;i<m_textures->size();i++)
@@ -110,15 +144,22 @@ namespace SDL
             m_textures->clear();
             delete m_textures;
         }
+        else if(m_rects)
+        {
+			m_rects->clear();
+			delete m_rects;
+        }
+
     }
     
     void AnimationTween::init()
     {
-        m_sprParent = static_cast<Sprite*>(m_parent);
+        m_sprParent = dynamic_cast<Sprite*>(m_parent);
         
         if(!m_sprParent)
         {
-            LogManager::log("AnimationTween can only given to a Sprite!");
+            LogManager::log("AnimationTween can only be given to a Sprite!");
+            return;
         }
         
         if(m_atlas)
@@ -133,7 +174,7 @@ namespace SDL
             m_sprParent->setSrcRect(m_srcRect);
             m_sprParent->setSize(m_srcRect.w,m_srcRect.h);
         }
-        else
+        else if(m_textures)
         {
             m_srcRect.x = 0;
             if(m_textures->empty())
@@ -142,6 +183,20 @@ namespace SDL
             }
             else
                 m_sprParent->setTexture((*m_textures)[0]);
+        }
+        else
+        {
+        	m_srcRect.x = 0;
+        	if(m_rects->empty())
+        	{
+        		LogManager::log("SDL_Rect Array of AnimationTween is empty");
+        	}
+        	else
+        	{
+        		m_sprParent->setSrcRect((*m_rects)[0]);
+        		m_sprParent->setSize((*m_rects)[0].w,(*m_rects)[0].h);
+        	}
+
         }
     }
     
@@ -171,17 +226,34 @@ namespace SDL
                     m_sprParent->setSrcRect(m_srcRect);
                 
                 }
-                else
+                else if(m_textures)
                 {
-                    if(m_srcRect.x++ == (int)m_textures->size())
+                    if(++m_srcRect.x == (int)m_textures->size())
                     {
+                    	m_srcRect.x = 0;
+
                         if(!m_loop)
-                            return true;
-                        
-                        m_srcRect.x = 0;
+                        {
+                        	return true;
+                        }
                     }
                     
                     m_sprParent->setTexture((*m_textures)[m_srcRect.x]);
+                }
+                else
+                {
+                	if(++m_srcRect.x == (int)m_rects->size())
+                	{
+                		m_srcRect.x = 0;
+
+                		if(!m_loop)
+                		{
+                			return true;
+                		}
+                	}
+
+                	m_sprParent->setSrcRect((*m_rects)[m_srcRect.x]);
+                	m_sprParent->setSize((*m_rects)[m_srcRect.x].w,(*m_rects)[m_srcRect.x].h);
                 }
                 
                 m_passedTime = 0.0;
@@ -195,11 +267,6 @@ namespace SDL
         m_loop(loop),
         m_length(length),
         m_speed(speed)
-    {
-        
-    }
-    
-    PulsateTween::~PulsateTween()
     {
         
     }

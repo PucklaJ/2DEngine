@@ -26,7 +26,7 @@ namespace SDL
 
     }
 
-    TextureHandle* ResourceManager::loadTexture(const std::string& file)
+    TextureHandle* ResourceManager::loadTexture(const std::string& file,const SDL_Color* colorKey)
     {
         TextureHandle* tex = nullptr;
 
@@ -46,16 +46,37 @@ namespace SDL
         }
         else
         {
-            tex = new TextureHandle(IMG_LoadTexture(m_renderer,file.c_str()));
+        	SDL_Surface* sur = nullptr;
+        	if(colorKey)
+        	{
+        		sur = IMG_Load(file.c_str());
+        		if(!sur)
+				{
+					LogManager::log(std::string("Error: ") + SDL_GetError());
+					return nullptr;
+				}
 
-            if(tex->getTexture() == nullptr)
-            {
-                LogManager::log(std::string("Error: ") + SDL_GetError());
-            }
-            else
-            {
-                m_textures[file] = tex;
-            }
+        		SDL_SetColorKey(sur,SDL_TRUE,SDL_MapRGBA(sur->format,colorKey->r,colorKey->g,colorKey->b,colorKey->a));
+        	}
+
+        	if(colorKey)
+        	{
+        		tex = new TextureHandle(m_renderer,sur);
+        	}
+        	else
+        	{
+        		tex = new TextureHandle(IMG_LoadTexture(m_renderer,file.c_str()));
+        	}
+
+			if(tex->getTexture() == nullptr)
+			{
+				LogManager::log(std::string("Error: ") + SDL_GetError());
+			}
+			else
+			{
+				m_textures[file] = tex;
+			}
+
         }
 
         return tex;

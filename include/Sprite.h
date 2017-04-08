@@ -16,7 +16,7 @@ namespace SDL
     {
     public:
             Sprite(int order = 0);
-            Sprite(const char* file,int order = 0);
+            Sprite(const char* file,const SDL_Color* colorKey = nullptr,int order = 0);
             Sprite(TextureHandle*,int order = 0);
             virtual ~Sprite();
 
@@ -32,9 +32,11 @@ namespace SDL
             void setScale(const float& s){m_size/=m_scale;m_scale = s;m_needsScaleUpdate = true;}
             void setTexture(TextureHandle* tex);
             void setSrcRect(const SDL_Rect& r){m_srcRect = r;}
+            void setFlip(const SDL_RendererFlip& flip) {m_flip = flip;}
 
             const double& getRotation() const {return m_rotation;}
             TextureHandle* getTexture() {return m_texture;}
+            const SDL_RendererFlip& getFlip() const {return m_flip;}
             
             bool intersects(Sprite*);
             bool intersects(const Vector2&);
@@ -44,12 +46,14 @@ namespace SDL
             TextureHandle* m_texture = nullptr;
             SDL_Rect m_srcRect;
             float m_scale = 1.0f;
+            SDL_RendererFlip m_flip = SDL_FLIP_NONE;
 
 
             double m_rotation;
 
         private:
             const char* m_file = nullptr;
+            const SDL_Color* m_colorKey = nullptr;
             bool m_needsScaleUpdate = false;
     };
 }

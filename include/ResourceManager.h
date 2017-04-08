@@ -30,7 +30,7 @@ namespace SDL
             ResourceManager(SDL_Renderer* renderer);
             virtual ~ResourceManager();
 
-            TextureHandle* loadTexture(const std::string& file);
+            TextureHandle* loadTexture(const std::string& file,const SDL_Color* colorKey = nullptr);
             TTF_Font* loadFont(const std::string& file,const int size);
             
             void clearFonts();

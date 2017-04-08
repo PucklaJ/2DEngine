@@ -11,7 +11,7 @@ namespace SDL
     {
         setName("PhysicsSprite");
     }
-    PhysicsSprite::PhysicsSprite(const char* file,b2Body* body,int order) : Sprite(file,order),
+    PhysicsSprite::PhysicsSprite(const char* file,const SDL_Color* colorKey,b2Body* body,int order) : Sprite(file,colorKey,order),
         m_body(body)
     {
         setName("PhysicsSprite");
@@ -45,7 +45,7 @@ namespace SDL
         
         if(m_mainClass->getPhysics())
         {
-            m_position = m_mainClass->getPhysics()->coordsWorldToPixel(m_body->GetPosition()) - (m_size/2.0);
+            m_position = m_mainClass->getPhysics()->coordsWorldToPixel(m_body->GetPosition()) - (m_size/2.0) + m_offset;
             m_rotation = -m_body->GetAngle() / MATH_PI * 180.0;
         }
         else

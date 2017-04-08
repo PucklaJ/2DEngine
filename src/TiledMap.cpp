@@ -7,7 +7,7 @@
 #include <mathematics.h>
 #include <Box2D/Box2D.h>
 #include <SDL2_gfxPrimitives.h>
-#define DRAW_DEBUG
+//#define DRAW_DEBUG
 
 #define GETGID(obj) (obj->GetGid() < 0 ? obj->GetGid()+INT_MAX : obj->GetGid())
 
@@ -162,8 +162,8 @@ namespace SDL
         m_texture = new TextureHandle(m_mainClass->getRenderer(),m_mainClass->getWindow()->getPixelFormat(),SDL_TEXTUREACCESS_TARGET,GetWidth() * GetTileWidth(),GetHeight() * GetTileHeight());
         m_texture->setBlendMode(SDL_BLENDMODE_BLEND);
         m_texture->setRenderTarget(m_mainClass->getRenderer());
-        SDL_SetRenderDrawBlendMode(m_mainClass->getRenderer(),SDL_BLENDMODE_BLEND);
-        SDL_SetRenderDrawColor(m_mainClass->getRenderer(),m_background.r,m_background.g,m_background.b,255);
+        SDL_SetRenderDrawBlendMode(m_mainClass->getRenderer(),SDL_BLENDMODE_NONE);
+        SDL_SetRenderDrawColor(m_mainClass->getRenderer(),m_background.r,m_background.g,m_background.b,m_background.a);
         SDL_RenderClear(m_mainClass->getRenderer());
     }
     
@@ -318,7 +318,7 @@ namespace SDL
             std::cout << "+ Name: " << obj->GetName() << std::endl;
             std::cout << "+ Typ: " << obj->GetType() << std::endl;
             std::cout << "+ GID: " << obj->GetGid() << std::endl;*/
-            if(obj->GetEllipse())
+            if(obj->GetEllipse() && m_renderObjects)
             {
                 //std::cout << "+ Ellipse" << std::endl;
                 const Tmx::Ellipse* ellipse = obj->GetEllipse();
@@ -331,7 +331,7 @@ namespace SDL
                 
                 continue;
             }
-            else if(obj->GetPolygon())
+            else if(obj->GetPolygon() && m_renderObjects)
             {
                 //std::cout << "+ Polygon" << std::endl;
                 const Tmx::Polygon* polygon = obj->GetPolygon();
@@ -368,7 +368,7 @@ namespace SDL
                 
                 continue;
             }
-            else if(obj->GetPolyline())
+            else if(obj->GetPolyline() && m_renderObjects)
             {
                 //std::cout << "+ Polyline" << std::endl;
                 const Tmx::Polyline* polyline = obj->GetPolyline();
@@ -415,6 +415,9 @@ namespace SDL
                 continue;
             }
             
+            if(!m_renderObjects)
+            	continue;
+
             // Render Rectangle
             
             SDL_Color color = colorStringToColor(objectGroup->GetColor());
@@ -596,13 +599,18 @@ namespace SDL
         
         ellipse = obj->GetEllipse();
         
+        const Tmx::PropertySet& props = obj->GetProperties();
+
         bdef.position = m_mainClass->getPhysics()->coordsPixelToWorld(Vector2(x+ellipse->GetCenterX()+obj->GetX(),y+ellipse->GetCenterY()+obj->GetY()));
-        bdef.type = b2_staticBody;
-        
-        fdef[0].density = 6.0f;
-        fdef[0].friction = 0.0f;
-        fdef[0].restitution = 0.0f;
-        fdef[0].filter.categoryBits = 1;
+		std::string type = props.GetStringProperty("Type","static");
+		bdef.type = (type == "static" ? b2_staticBody : (type == "dynamic" ? b2_dynamicBody : b2_kinematicBody));
+
+		fdef[0].density = props.GetFloatProperty("Density",DEF_DENSITY);
+		fdef[0].friction = props.GetFloatProperty("Friction",DEF_FRICTION);
+		fdef[0].restitution = props.GetFloatProperty("Restitution",DEF_RESTITUTION);
+		fdef[0].filter.categoryBits = props.GetIntProperty("CategoryBits",1);
+		fdef[0].filter.maskBits = props.GetIntProperty("MaskBits",~0);
+		fdef[0].isSensor = props.GetBoolProperty("isSensor",false);
         
         body = m_mainClass->getPhysics()->getWorld()->CreateBody(&bdef);
         
@@ -628,6 +636,8 @@ namespace SDL
         	return;
         }
 
+        const Tmx::PropertySet& props = obj->GetProperties();
+
         b2Body* body;
         b2BodyDef bdef;
         b2FixtureDef fdef;
@@ -639,11 +649,17 @@ namespace SDL
         Vector2 pixelPos((double)x+(double)GetTileWidth()/2.0,(double)y+(double)GetTileHeight()/2.0);
 
         bdef.position = m_mainClass->getPhysics()->coordsPixelToWorld(pixelPos);
-        bdef.type = b2_staticBody;
+        std::string type = props.GetStringProperty("Type","static");
+        bdef.type = (type == "static" ? b2_staticBody : (type == "dynamic" ? b2_dynamicBody : b2_kinematicBody));
         
-        fdef.density = DEF_DENSITY;
-        fdef.friction = DEF_FRICTION;
-        fdef.restitution = DEF_RESTITUTION;
+        fdef.density = props.GetFloatProperty("Density",DEF_DENSITY);
+        fdef.friction = props.GetFloatProperty("Friction",DEF_FRICTION);
+        fdef.restitution = props.GetFloatProperty("Restitution",DEF_RESTITUTION);
+        fdef.filter.categoryBits = props.GetIntProperty("CategoryBits",1);
+        fdef.filter.maskBits = props.GetIntProperty("MaskBits",~0);
+        fdef.isSensor = props.GetBoolProperty("isSensor",false);
+
+
 
         for(int i = polygon->GetNumPoints()-1;i>=0;i--)
         {
@@ -684,11 +700,17 @@ namespace SDL
         
         v = new b2Vec2[polyline->GetNumPoints()];
 
-        bdef.type = b2_staticBody;
+        const Tmx::PropertySet& props = obj->GetProperties();
 
-        fdef.density = DEF_DENSITY;
-        fdef.friction = DEF_FRICTION;
-        fdef.restitution = DEF_RESTITUTION;
+		std::string type = props.GetStringProperty("Type","static");
+		bdef.type = (type == "static" ? b2_staticBody : (type == "dynamic" ? b2_dynamicBody : b2_kinematicBody));
+
+		fdef.density = props.GetFloatProperty("Density",DEF_DENSITY);
+		fdef.friction = props.GetFloatProperty("Friction",DEF_FRICTION);
+		fdef.restitution = props.GetFloatProperty("Restitution",DEF_RESTITUTION);
+		fdef.filter.categoryBits = props.GetIntProperty("CategoryBits",1);
+		fdef.filter.maskBits = props.GetIntProperty("MaskBits",~0);
+		fdef.isSensor = props.GetBoolProperty("isSensor",false);
         
         for(int i = polyline->GetNumPoints()-1;i>=0;i--)
         {
@@ -717,13 +739,18 @@ namespace SDL
         b2FixtureDef fdef;
         b2PolygonShape shape;
         
-        bdef.type = b2_staticBody;
+        const Tmx::PropertySet& props = obj->GetProperties();
+
         bdef.position = m_mainClass->getPhysics()->coordsPixelToWorld(Vector2((double)x+(double)obj->GetX()+(double)obj->GetWidth()/2.0,(double)y+(double)obj->GetY()+(double)obj->GetHeight()/2.0));
-        
-        fdef.density = 6.0f;
-        fdef.friction = 1.0f;
-        fdef.restitution = 0.0f;
-        fdef.filter.categoryBits = 1;
+		std::string type = props.GetStringProperty("Type","static");
+		bdef.type = (type == "static" ? b2_staticBody : (type == "dynamic" ? b2_dynamicBody : b2_kinematicBody));
+
+		fdef.density = props.GetFloatProperty("Density",DEF_DENSITY);
+		fdef.friction = props.GetFloatProperty("Friction",DEF_FRICTION);
+		fdef.restitution = props.GetFloatProperty("Restitution",DEF_RESTITUTION);
+		fdef.filter.categoryBits = props.GetIntProperty("CategoryBits",1);
+		fdef.filter.maskBits = props.GetIntProperty("MaskBits",~0);
+		fdef.isSensor = props.GetBoolProperty("isSensor",false);
         
         shape.SetAsBox(m_mainClass->getPhysics()->scalarPixelToWorld((double)obj->GetWidth()/2.0),m_mainClass->getPhysics()->scalarPixelToWorld((double)obj->GetHeight()/2.0));
         fdef.shape = &shape;
@@ -927,5 +954,27 @@ namespace SDL
             m_mainClass->getPhysics()->getWorld()->DestroyBody(m_bodies[i]);
         }
         m_bodies.clear();
+    }
+
+    b2Body* TiledMap::toCollisionBody(const Tmx::Object* obj)
+    {
+    	if(obj->GetEllipse())
+    	{
+    		loadCollisionEllipse(obj,0,0);
+    	}
+    	else if(obj->GetPolygon())
+    	{
+    		loadCollisionPolygon(obj,0,0);
+    	}
+    	else if(obj->GetPolyline())
+    	{
+    		loadCollisionPolyline(obj,0,0);
+    	}
+    	else
+    	{
+    		loadCollisionRectangle(obj,0,0);
+    	}
+
+    	return m_bodies.back();
     }
 }

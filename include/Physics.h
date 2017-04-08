@@ -6,7 +6,7 @@
 
 #define DEF_FRICTION 1.0f
 #define DEF_RESTITUTION 0.0f
-#define DEF_DENSITY 6.0f
+#define DEF_DENSITY 1.0f
 
 namespace SDL
 {
@@ -45,6 +45,8 @@ namespace SDL
             b2Body* createBOX(const Vector2&,double,double,b2BodyDef&,b2FixtureDef&);
             b2Body* createCIRCLE(const Vector2&,double,float32 friction = DEF_FRICTION,float32 restitution = DEF_RESTITUTION,float32 density = DEF_DENSITY,b2BodyType type = b2_dynamicBody);
             b2Body* createCIRCLE(const Vector2&,double,b2BodyDef&,b2FixtureDef&);
+            b2Body* createCAPSULE(const Vector2&,double,double,float32 friction = DEF_FRICTION,float32 restitution = DEF_RESTITUTION,float32 density = DEF_DENSITY,b2BodyType type = b2_dynamicBody);
+            b2Body* createCAPSULE(const Vector2&,double,double,b2BodyDef&,b2FixtureDef&);
             
         protected:
 

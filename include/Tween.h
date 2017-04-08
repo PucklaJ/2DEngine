@@ -19,15 +19,24 @@ namespace SDL
             virtual bool update()=0;
             virtual void init();
             void setParent(Actor*);
+            void setPaused(bool b) {m_paused = b;}
             
             void addTime(double);
 
+            const bool isPaused() const {return m_paused;}
+            const int getID() const {return m_id;}
+
         protected:
+            void quit();
+
             double m_time;
             double m_passedTime = 0.0;
             Actor* m_parent;
+            bool m_paused=false;
+            int m_id;
 
         private:
+            static std::vector<int> m_ids;
 
     };
 
@@ -35,7 +44,6 @@ namespace SDL
     {
     public:
         PositionTween(const Vector2&,double);
-        virtual ~PositionTween();
 
         void init() override;
         bool update() override;
@@ -50,6 +58,7 @@ namespace SDL
     public:
         AnimationTween(TextureHandle* atlas,int x,int y,double time,bool loop = true,bool customTime = false);
         AnimationTween(const std::vector<TextureHandle*>&,double time,bool loop = true,bool customTime = false);
+        AnimationTween(const std::vector<SDL_Rect>&,double time,bool loop = true,bool customTime = false);
         ~AnimationTween();
         
         void init() override;
@@ -57,6 +66,7 @@ namespace SDL
     private:
         Sprite* m_sprParent;
         std::vector<TextureHandle*>* m_textures = nullptr;
+        std::vector<SDL_Rect>* m_rects = nullptr;
         TextureHandle* m_atlas = nullptr;
         int m_x;
         int m_y;
@@ -69,7 +79,6 @@ namespace SDL
     {
     public:
         PulsateTween(double,double speed = 6.0,bool loop = true);
-        ~PulsateTween();
         
         void init() override;
         bool update() override;
