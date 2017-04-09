@@ -977,4 +977,29 @@ namespace SDL
 
     	return m_bodies.back();
     }
+
+    void TiledMap::destroyTile(int x,int y,int layer)
+    {
+    	TextureHandle* tex = m_textures[layer];
+
+    	SDL_SetRenderDrawColor(m_mainClass->getRenderer(),0,0,0,0);
+    	SDL_SetRenderDrawBlendMode(m_mainClass->getRenderer(),SDL_BLENDMODE_NONE);
+    	tex->setRenderTarget(m_mainClass->getRenderer());
+
+    	SDL_Rect rect = {x*GetTileWidth(),y*GetTileHeight(),GetTileWidth(),GetTileHeight()};
+
+    	SDL_RenderFillRect(m_mainClass->getRenderer(),&rect);
+    	SDL_SetRenderDrawBlendMode(m_mainClass->getRenderer(),SDL_BLENDMODE_BLEND);
+    	SDL_SetRenderTarget(m_mainClass->getRenderer(),m_mainClass->getBackBuffer());
+
+    	for(size_t i = 0;i<m_animTiles.size();i++)
+    	{
+    		if(m_animTiles[i].x == x*GetTileWidth() && m_animTiles[i].y == y*GetTileHeight() && m_animTiles[i].layer == layer)
+    		{
+    			m_animTiles[i] = m_animTiles.back();
+    			m_animTiles.pop_back();
+    			return;
+    		}
+    	}
+    }
 }

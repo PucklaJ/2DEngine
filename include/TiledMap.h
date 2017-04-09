@@ -40,6 +40,8 @@ namespace SDL
         b2Body* toCollisionBody(const Tmx::Object*);
         void setRenderObjects(bool b) {m_renderObjects = b;}
         
+        void destroyTile(int,int,int);
+
     private:
         int getIDofTileset(const Tmx::Tileset*);
         const Tmx::Tileset* getTileset(int);
