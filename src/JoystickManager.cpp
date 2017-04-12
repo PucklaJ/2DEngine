@@ -4,6 +4,7 @@
 #include <iostream>
 #include <LogManager.h>
 #include <operators.h>
+//#define DEBUG_OUTPUTS
 
 namespace SDL
 {
@@ -26,24 +27,30 @@ namespace SDL
 
     void JoystickManager::pollEvents(const SDL_Event& e)
     {
+#ifdef DEBUG_OUTPUTS
+    	std::cout << "JoystickManager pollEvents" << std::endl;
+#endif
         switch(e.type)
         {
-        case SDL_JOYAXISMOTION:
-            m_listener->onAxisMotion(e.jaxis);
+        case SDL_CONTROLLERAXISMOTION:
+            m_listener->onAxisMotion(e.caxis);
             break;
-        case SDL_JOYBUTTONDOWN:
-            m_listener->onButtonDown(e.jbutton);
+        case SDL_CONTROLLERBUTTONDOWN:
+            m_listener->onButtonDown(e.cbutton);
             break;
-        case SDL_JOYBUTTONUP:
-            m_listener->onButtonUp(e.jbutton);
+        case SDL_CONTROLLERBUTTONUP:
+            m_listener->onButtonUp(e.cbutton);
             break;
-        case SDL_JOYDEVICEADDED:
-            m_listener->onConnect(e.jdevice);
+        case SDL_CONTROLLERDEVICEADDED:
+            m_listener->onConnect(e.cdevice);
             break;
-        case SDL_JOYDEVICEREMOVED:
-            m_listener->onDisconnect(e.jdevice);
+        case SDL_CONTROLLERDEVICEREMOVED:
+            m_listener->onDisconnect(e.cdevice);
             break;
         }
+#ifdef DEBUG_OUTPUTS
+        std::cout << "JoystickManager pollEvents end" << std::endl;
+#endif
     }
 
     bool equal(Uint8 u1[], Uint8 u2[])
@@ -59,50 +66,50 @@ namespace SDL
         return true;
     }
 
-    void JoystickManager::addJoystick(SDL_Joystick* j)
+    void JoystickManager::addController(SDL_GameController* j)
     {
-        for(size_t i = 0;i<m_joysticks.size();i++)
+        for(size_t i = 0;i<m_controllers.size();i++)
         {
-            if(m_joysticks[i] == nullptr)
+            if(m_controllers[i] == nullptr)
                 continue;
-            if(equal(SDL_JoystickGetGUID(j).data,SDL_JoystickGetGUID(m_joysticks[i]).data))
+            if(equal(SDL_JoystickGetGUID(SDL_GameControllerGetJoystick(j)).data,SDL_JoystickGetGUID(SDL_GameControllerGetJoystick(m_controllers[i])).data))
                 return;
         }
 
-        for(size_t i = 0;i<m_joysticks.size();i++)
+        for(size_t i = 0;i<m_controllers.size();i++)
         {
-            if(m_joysticks[i] == nullptr)
+            if(m_controllers[i] == nullptr)
             {
-                LogManager::log("Added Joystick as nullptr");
-                m_joysticks[i] = j;
+                LogManager::log("Added Controller as nullptr");
+                m_controllers[i] = j;
                 return;
             }
         }
 
-        m_joysticks.push_back(j);
+        m_controllers.push_back(j);
     }
 
-    void JoystickManager::removeJoystick(SDL_Joystick* j)
+    void JoystickManager::removeController(SDL_GameController* j)
     {
-        for(size_t i = 0;i<m_joysticks.size();i++)
+        for(size_t i = 0;i<m_controllers.size();i++)
         {
-            if(equal(SDL_JoystickGetGUID(j).data,SDL_JoystickGetGUID(m_joysticks[i]).data))
+            if(equal(SDL_JoystickGetGUID(SDL_GameControllerGetJoystick(j)).data,SDL_JoystickGetGUID(SDL_GameControllerGetJoystick(m_controllers[i])).data))
             {
-                SDL_JoystickClose(m_joysticks[i]);
-                m_joysticks[i] = nullptr;
+                SDL_GameControllerClose(m_controllers[i]);
+                m_controllers[i] = nullptr;
                 break;
             }
 
         }
     }
-    void JoystickManager::removeJoystick(int which)
+    void JoystickManager::removeController(int which)
     {
-        for(size_t i = 0;i<m_joysticks.size();i++)
+        for(size_t i = 0;i<m_controllers.size();i++)
         {
-            if(SDL_JoystickInstanceID(m_joysticks[i]) == which)
+            if(SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(m_controllers[i])) == which)
             {
-                SDL_JoystickClose(m_joysticks[i]);
-                m_joysticks[i] = nullptr;
+                SDL_GameControllerClose(m_controllers[i]);
+                m_controllers[i] = nullptr;
                 break;
             }
         }
@@ -112,19 +119,19 @@ namespace SDL
     {
         if(m_listener == nullptr)
         {
-            LogManager::log("Listener of JoystickManager is nullptr! ");
+            LogManager::log("Listener of JoystickManager is nullptr!");
             return;
         }
 
-        for(size_t i = 0;i<m_joysticks.size();i++)
+        for(size_t i = 0;i<m_controllers.size();i++)
         {
-            if(m_joysticks[i] == nullptr)
+            if(m_controllers[i] == nullptr)
                 continue;
 
-            if(SDL_JoystickGetAttached(m_joysticks[i]) == SDL_FALSE)
+            if(SDL_GameControllerGetAttached(m_controllers[i]) == SDL_FALSE)
             {
-                SDL_JoystickClose(m_joysticks[i]);
-                m_joysticks[i] = nullptr;
+                SDL_GameControllerClose(m_controllers[i]);
+                m_controllers[i] = nullptr;
             }
         }
 

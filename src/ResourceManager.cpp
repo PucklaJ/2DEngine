@@ -10,11 +10,15 @@
 #include <LogManager.h>
 #include <TextureHandle.h>
 #include <mathematics.h>
+#include <Music.h>
+#include <Sound.h>
 
 namespace SDL
 {
     typedef map<std::string,TextureHandle*>::iterator TextureIterator;
     typedef map<pair<std::string,int>,TTF_Font*>::iterator FontIterator;
+    typedef map<std::string,Music*>::iterator MusicIterator;
+    typedef map<std::string,Sound*>::iterator SoundIterator;
 
     ResourceManager::ResourceManager(SDL_Renderer* renderer) : m_renderer(renderer)
     {
@@ -163,6 +167,8 @@ namespace SDL
     {
         clearTextures();
         clearFonts();
+        clearMusics();
+        clearSounds();
     }
     
     bool ResourceManager::isLoaded(TextureHandle* tex)
@@ -186,6 +192,143 @@ namespace SDL
         
         return false;
     }
+
+    Music* ResourceManager::loadMusic(const std::string& file)
+    {
+    	Music* music = nullptr;
+
+		MusicIterator it;
+
+		for(it = m_musics.begin();it!=m_musics.end();it++)
+		{
+			if(it->first.compare(file) == 0)
+			{
+				break;
+			}
+		}
+
+		if(it != m_musics.end())
+		{
+			music = it->second;
+		}
+		else
+		{
+			music = new Music(Mix_LoadMUS(file.c_str()));
+
+			if(music->getMusic() == nullptr)
+			{
+				LogManager::log(std::string("Error: ") + Mix_GetError());
+			}
+			else
+			{
+				m_musics[file] = music;
+			}
+
+		}
+
+		return music;
+    }
+    Sound* ResourceManager::loadSound(const std::string& file)
+    {
+    	Sound* sound = nullptr;
+
+		SoundIterator it;
+
+		for(it = m_sounds.begin();it!=m_sounds.end();it++)
+		{
+			if(it->first.compare(file) == 0)
+			{
+				break;
+			}
+		}
+
+		if(it != m_sounds.end())
+		{
+			sound = it->second;
+		}
+		else
+		{
+			sound = new Sound(Mix_LoadWAV(file.c_str()));
+
+			if(sound->getChunk() == nullptr)
+			{
+				LogManager::log(std::string("Error: ") + Mix_GetError());
+			}
+			else
+			{
+				m_sounds[file] = sound;
+			}
+
+		}
+
+		return sound;
+    }
+
+    void ResourceManager::clearMusics()
+    {
+    	for(MusicIterator it = m_musics.begin();it!=m_musics.end();it++)
+		{
+			if(it->second)
+				delete it->second;
+		}
+
+		m_musics.clear();
+    }
+	void ResourceManager::deleteMusic(Music* m)
+	{
+		for(MusicIterator it = m_musics.begin();it!=m_musics.end();it++)
+		{
+			if(it->second == m)
+			{
+				delete it->second;
+				m_musics.erase(it);
+				break;
+			}
+		}
+	}
+	void ResourceManager::clearSounds()
+	{
+		for(SoundIterator it = m_sounds.begin();it!=m_sounds.end();it++)
+		{
+			if(it->second)
+				delete it->second;
+		}
+
+		m_musics.clear();
+	}
+	void ResourceManager::deleteSound(Sound* c)
+	{
+		for(SoundIterator it = m_sounds.begin();it!=m_sounds.end();it++)
+		{
+			if(it->second == c)
+			{
+				delete it->second;
+				m_sounds.erase(it);
+				break;
+			}
+		}
+	}
+
+	bool ResourceManager::isLoaded(Music* m)
+	{
+		for(MusicIterator it = m_musics.begin();it!=m_musics.end();it++)
+		{
+			if(it->second == m)
+				return true;
+		}
+
+		return false;
+	}
+	bool ResourceManager::isLoaded(Sound* c)
+	{
+		for(SoundIterator it = m_sounds.begin();it!=m_sounds.end();it++)
+		{
+			if(it->second == c)
+				return true;
+		}
+
+		return false;
+	}
 }
 
 

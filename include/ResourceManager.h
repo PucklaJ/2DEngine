@@ -23,6 +23,8 @@ using namespace std;
 namespace SDL
 {
     class TextureHandle;
+    class Music;
+    class Sound;
 
     class ResourceManager
     {
@@ -32,14 +34,23 @@ namespace SDL
 
             TextureHandle* loadTexture(const std::string& file,const SDL_Color* colorKey = nullptr);
             TTF_Font* loadFont(const std::string& file,const int size);
+            Music* loadMusic(const std::string& file);
+            Sound* loadSound(const std::string& file);
             
+
             void clearFonts();
             void deleteFont(TTF_Font*);
             void clearTextures();
             void deleteTexture(TextureHandle*);
+            void clearMusics();
+            void deleteMusic(Music*);
+            void clearSounds();
+            void deleteSound(Sound*);
             
             bool isLoaded(TextureHandle*);
             bool isLoaded(TTF_Font*);
+            bool isLoaded(Music*);
+            bool isLoaded(Sound*);
             
             void clear();
 
@@ -49,6 +60,8 @@ namespace SDL
         private:
             map<std::string,TextureHandle*> m_textures;
             map<pair<std::string,int>,TTF_Font*> m_fonts;
+            map<std::string,Music*> m_musics;
+            map<std::string,Sound*> m_sounds;
             SDL_Renderer* m_renderer = nullptr;
 
     };

@@ -8,6 +8,7 @@
 #include <string>
 #include <iostream>
 #include <cstdio>
+//#define DEBUG_OUTPUTS
 
 
 namespace SDL
@@ -45,12 +46,23 @@ namespace SDL
 
     bool Actor::m_update()
     {
-
+#ifdef DEBUG_OUTPUTS
+    	std::cout << "m_update: " << m_name << std::endl;
+    	std::cout << "Children: " << m_children.size() << std::endl;
+#endif
         for(std::size_t i = 0;i<m_children.size();i++)
         {
+#ifdef DEBUG_OUTPUTS
+        	std::cout << "Children[" << i << "]: " << m_children[i]->getName() << std::endl;
+#endif
+
             if(!m_children[i]->m_all_update())
                 return false;
         }
+#ifdef DEBUG_OUTPUTS
+        std::cout << "Updated Children" << std::endl;
+        std::cout << "Updateing Tweens" << std::endl;
+#endif
 
         for(std::size_t i = 0;i<m_tweens.size();i++)
         {
@@ -59,12 +71,18 @@ namespace SDL
 
             if(m_tweens[i]->update())
             {
+#ifdef DEBUG_OUTPUTS
+            	std::cout << "Tween Finished" << std::endl;
+#endif
                 delete m_tweens[i];
                 m_tweens[i] = m_tweens.back();
                 m_tweens.pop_back();
                 i--;
             }
         }
+#ifdef DEBUG_OUTPUTS
+        std::cout << "End of m_update: " << m_name << std::endl;
+#endif
 
         return true;
     }
@@ -76,8 +94,6 @@ namespace SDL
             if(!m_children[i]->m_all_render())
                 return false;
         }
-
-        removeChildrenAfterLoops();
 
         return true;
     }
@@ -113,6 +129,10 @@ namespace SDL
 
     bool Actor::addChild(Actor* a,bool instantAdd)
     {
+#ifdef DEBUG_OUTPUTS
+    	std::cout << "AddChild: " << a->getName() << std::endl;
+#endif
+
         if(a->getID() == getID() || isChild(a))
             return true;
 
@@ -148,36 +168,69 @@ namespace SDL
 
     bool Actor::addChildrenBeforeLoops()
     {
+#ifdef DEBUG_OUTPUTS
+    	std::cout << "Add Children Before Loops: " << m_name << std::endl;
+#endif
+
         if(m_childrenToAdd.empty())
-            return true;
+        {
+#ifdef DEBUG_OUTPUTS
+        	std::cout << "Returned From Empty" << std::endl;
+#endif
+        	return true;
+        }
+
 
         for(size_t i = 0;i<m_childrenToAdd.size();i++)
         {
+#ifdef DEBUG_OUTPUTS
+        	std::cout << "ChildrenToAdd[" << i << "]: " << m_name << std::endl;
+#endif
+
             Actor* p = m_childrenToAdd[i]->getParent();
             if(p)
             {
+#ifdef DEBUG_OUTPUTS
+            	std::cout << "Removing parent" << std::endl;
+#endif
                 p->removeChild(m_childrenToAdd[i],false);
             }
+
+#ifdef DEBUG_OUTPUTS
+            std::cout << "setting variables" << std::endl;
+#endif
 
             m_childrenToAdd[i]->setParent(this);
             m_childrenToAdd[i]->setMainClass(m_mainClass);
             m_childrenToAdd[i]->setRenderer(m_renderer);
 
+#ifdef DEBUG_OUTPUTS
+            std::cout << "Adding to array" << std::endl;
+#endif
             m_children.push_back(m_childrenToAdd[i]);
 
             m_needsChildReorder = true;
 
             if(!m_childrenToAdd[i]->m_initialised)
             {
+#ifdef DEBUG_OUTPUTS
+            	std::cout << "initializing child" << std::endl;
+#endif
                 if(!m_childrenToAdd[i]->init())
                     return false;
                 m_childrenToAdd[i]->m_initialised = true;
+#ifdef DEBUG_OUTPUTS
+                std::cout << "initialized" << std::endl;
+#endif
             }
 
 
         }
 
         m_childrenToAdd.clear();
+#ifdef DEBUG_OUTPUTS
+        std::cout << "ChildrenBeforeLoops End" << std::endl;
+#endif
 
         return true;
     }
@@ -281,8 +334,17 @@ namespace SDL
 
     void Actor::removeChildrenAfterLoops()
     {
+#ifdef DEBUG_OUTPUTS
+    	std::cout << "Remove Children After Loops: " << m_name << std::endl;
+#endif
         if(m_idsToRemove.empty())
-            return;
+        {
+#ifdef DEBUG_OUTPUTS
+        	std::cout << "Returned From Empty" << std::endl;
+#endif
+        	return;
+        }
+
 
         int id;
         bool del;
@@ -290,6 +352,9 @@ namespace SDL
         {
             id = m_idsToRemove[u];
             del = m_ifDeleteToRemove[u];
+#ifdef DEBUG_OUTPUTS
+            std::cout << "Reovable[" << u << "]: " << m_name << std::endl;
+#endif
 
             for(std::size_t i = 0;i<m_children.size();i++)
             {
@@ -297,6 +362,9 @@ namespace SDL
                 {
                     if(del)
                     {
+#ifdef DEBUG_OUTPUTS
+                    	std::cout << "Found and Delete" << std::endl;
+#endif
                         m_children[i]->m_all_quit();
                         delete m_children[i];
                     }
@@ -304,8 +372,7 @@ namespace SDL
                     m_children.pop_back();
 
                     m_needsChildReorder = true;
-
-                    return;
+                    break;
                 }
             }
         }
@@ -345,17 +412,32 @@ namespace SDL
 
     bool Actor::m_all_update()
     {
+#ifdef DEBUG_OUTPUTS
+    	std::cout << "m_all_update: " << m_name << std::endl;
+#endif
         if(!addChildrenBeforeLoops())
             return false;
+#ifdef DEBUG_OUTPUTS
+        std::cout << "After Children adding" << std::endl;
+#endif
 
         if(m_needsChildReorder)
         {
+#ifdef DEBUG_OUTPUTS
+        	std::cout << "Reorder Children" << std::endl;
+#endif
             reorderChildren();
             m_needsChildReorder = false;
         }
+#ifdef DEBUG_OUTPUTS
+        std::cout << "Right Before updating" << std::endl;
+#endif
 
         if(!(update() && m_update()))
             return false;
+#ifdef DEBUG_OUTPUTS
+        std::cout << "m_all_update end: " << m_name << std::endl;
+#endif
 
         return true;
     }
@@ -403,10 +485,29 @@ namespace SDL
     bool Actor::m_render_render()
     {
         if(!m_visible)
-            return true;
+        {
+#ifdef DEBUG_OUTPUTS
+        std::cout << "Children Before: " << m_children.size() << std::endl;
+#endif
+
+        removeChildrenAfterLoops();
+#ifdef DEBUG_OUTPUTS
+        std::cout << "Children After: " << m_children.size() << std::endl;
+#endif
+        return true;
+        }
+
 
         if(!isOnScreen())
         {
+#ifdef DEBUG_OUTPUTS
+        std::cout << "Children Before: " << m_children.size() << std::endl;
+#endif
+
+        removeChildrenAfterLoops();
+#ifdef DEBUG_OUTPUTS
+        std::cout << "Children After: " << m_children.size() << std::endl;
+#endif
             return true;
         }
 
@@ -424,6 +525,14 @@ namespace SDL
         {
             if(!(m_render() && render()))
             {
+#ifdef DEBUG_OUTPUTS
+        std::cout << "Children Before: " << m_children.size() << std::endl;
+#endif
+
+        removeChildrenAfterLoops();
+#ifdef DEBUG_OUTPUTS
+        std::cout << "Children After: " << m_children.size() << std::endl;
+#endif
                 return false;
             }
         }
@@ -431,9 +540,25 @@ namespace SDL
         {
             if(!(render() && m_render()))
             {
+#ifdef DEBUG_OUTPUTS
+        std::cout << "Children Before: " << m_children.size() << std::endl;
+#endif
+
+        removeChildrenAfterLoops();
+#ifdef DEBUG_OUTPUTS
+        std::cout << "Children After: " << m_children.size() << std::endl;
+#endif
                 return false;
             }
         }
+#ifdef DEBUG_OUTPUTS
+        std::cout << "Children Before: " << m_children.size() << std::endl;
+#endif
+
+        removeChildrenAfterLoops();
+#ifdef DEBUG_OUTPUTS
+        std::cout << "Children After: " << m_children.size() << std::endl;
+#endif
 
         return true;
     }

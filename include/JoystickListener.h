@@ -9,20 +9,20 @@ namespace SDL
     extern int Uint8ToInt(Uint8 u);
     namespace Buttons
     {
-        const int UP = 0,
-                  DOWN = 1,
-                  LEFT = 2,
-                  RIGHT = 3,
-                  START = 4,
-                  SELECT = 5,
-                  L3 = 6,
-                  R3 = 7,
-                  L1 = 8,
-                  R1 = 9,
-                  CROSS = 10,
-                  CIRCLE = 11,
-                  SQUARE = 12,
-                  TRIANGLE = 13,
+        const int UP = 11,
+                  DOWN = 12,
+                  LEFT = 13,
+                  RIGHT = 14,
+                  START = 6,
+                  SELECT = 4,
+                  L3 = 7,
+                  R3 = 8,
+                  L1 = 9,
+                  R1 = 10,
+                  CROSS = 0,
+                  CIRCLE = 1,
+                  SQUARE = 2,
+                  TRIANGLE = 3,
                   BACK=SELECT,
                   LS=L3,
                   RS=R3,
@@ -53,9 +53,10 @@ namespace SDL
     class AxisButtonListener
     {
     public:
-        virtual void onAxisMotion(const SDL_JoyAxisEvent&)=0;
-        virtual void onButtonDown(const SDL_JoyButtonEvent&)=0;
-        virtual void onButtonUp(const SDL_JoyButtonEvent&)=0;
+    	virtual ~AxisButtonListener(){}
+        virtual void onAxisMotion(const SDL_ControllerAxisEvent&)=0;
+        virtual void onButtonDown(const SDL_ControllerButtonEvent&)=0;
+        virtual void onButtonUp(const SDL_ControllerButtonEvent&)=0;
 
         void setListener(JoystickListener*);
     protected:
@@ -67,8 +68,10 @@ namespace SDL
     class ConnectionListener
     {
     public:
-        virtual void onConnect(const SDL_JoyDeviceEvent&)=0;
-        virtual void onDisconnect(const SDL_JoyDeviceEvent&)=0;
+    	virtual ~ConnectionListener();
+
+        virtual void onConnect(const SDL_ControllerDeviceEvent&)=0;
+        virtual void onDisconnect(const SDL_ControllerDeviceEvent&)=0;
 
         void setListener(JoystickListener*);
     protected:
@@ -88,14 +91,16 @@ namespace SDL
             void setManager(JoystickManager*);
             JoystickManager* getManager(){return m_manager;}
 
-            void onAxisMotion(const SDL_JoyAxisEvent&);
-            void onButtonDown(const SDL_JoyButtonEvent&);
-            void onButtonUp(const SDL_JoyButtonEvent&);
-            void onConnect(const SDL_JoyDeviceEvent&);
-            void onDisconnect(const SDL_JoyDeviceEvent&);
+            void onAxisMotion(const SDL_ControllerAxisEvent&);
+            void onButtonDown(const SDL_ControllerButtonEvent&);
+            void onButtonUp(const SDL_ControllerButtonEvent&);
+            void onConnect(const SDL_ControllerDeviceEvent&);
+            void onDisconnect(const SDL_ControllerDeviceEvent&);
 
             void addListener(AxisButtonListener*,int);
             void addListener(ConnectionListener*,int);
+            void removeListener(AxisButtonListener*);
+            void removeListener(ConnectionListener*);
 
         protected:
             JoystickManager* m_manager = nullptr;

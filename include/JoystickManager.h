@@ -17,17 +17,17 @@ namespace SDL
             void update();
 
             void setListener(JoystickListener*);
-            void addJoystick(SDL_Joystick*);
-            void removeJoystick(SDL_Joystick*);
-            void removeJoystick(int);
+            void addController(SDL_GameController*);
+            void removeController(SDL_GameController*);
+            void removeController(int);
 
-            std::vector<SDL_Joystick*>& getJoysticks(){return m_joysticks;}
+            std::vector<SDL_GameController*>& getControllers(){return m_controllers;}
 
         protected:
 
         private:
             JoystickListener* m_listener = nullptr;
-            std::vector<SDL_Joystick*> m_joysticks;
+            std::vector<SDL_GameController*> m_controllers;
     };
 }
 

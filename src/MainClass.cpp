@@ -19,6 +19,11 @@
 #include <Colors.h>
 #include <Sprite.h>
 #include <ContactListener.h>
+#ifndef _WIN32
+#include <cAudio/cAudio.h>
+#endif
+#include <SDL2/SDL_mixer.h>
+//#define DEBUG_OUTPUTS
 
 using namespace std;
 
@@ -103,7 +108,18 @@ namespace SDL
         	delete m_contactListener;
         	m_contactListener = nullptr;
         }
+#ifndef _WIN32
+        if(m_audioManager)
+        {
+        	cAudio::destroyAudioManager(m_audioManager);
+        	m_audioManager = nullptr;
+        }
+#endif
 
+        if(m_audioOpened)
+        {
+        	Mix_CloseAudio();
+        }
 
         removeChild(m_inputManager);
         m_resourceManager->clear();
@@ -112,6 +128,10 @@ namespace SDL
 
         SDL_DestroyRenderer(m_renderer);
         delete m_window;
+
+        IMG_Quit();
+        TTF_Quit();
+        Mix_Quit();
         SDL_Quit();
 
         delete Colors::m_COLOR_KEY;
@@ -123,23 +143,26 @@ namespace SDL
         
         if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
         {
-            LogManager::log(std::string("Error Initializing SDL: ") + std::string(SDL_GetError()));
+            LogManager::log(std::string("Error Initializing SDL: ") + SDL_GetError());
             getchar();
             exit(-1);
         }
         if(IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG) != (IMG_INIT_PNG | IMG_INIT_JPG))
         {
-            LogManager::log(std::string("Error Initializing IMG: ") + std::string(SDL_GetError()));
+            LogManager::log(std::string("Error Initializing IMG: ") + SDL_GetError());
             getchar();
             exit(-1);
         }
         if(TTF_Init() < 0)
         {
-            LogManager::log(std::string("Error Initializing TTF: ") + std::string(SDL_GetError()));
+            LogManager::log(std::string("Error Initializing TTF: ") + SDL_GetError());
             getchar();
             exit(-1);
         }
-
+        if(Mix_Init(~0) == 0)
+        {
+        	LogManager::log(std::string("Error Initializing Mixer: ") + Mix_GetError());
+        }
 
         m_window = new WindowHandle(this,m_windowTitle,SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,m_windowWidth,m_windowHeight,SDL_WINDOW_SHOWN);
         if(!m_window)
@@ -215,6 +238,9 @@ namespace SDL
         
         while(true)
         {
+#ifdef DEBUG_OUTPUTS
+        	std::cout << "Start of mainLoop" << std::endl;
+#endif
                 #ifdef MAX_FPS_LOCK
                 if(m_timeForMaxFPS == 0.0)
                 {
@@ -228,18 +254,29 @@ namespace SDL
                 if(m_timeForMaxFPS >= 1.0/1000.0)
                 {
                 #endif
+#ifdef DEBUG_OUTPUTS
+                	std::cout << "PollEvents" << std::endl;
+#endif
                     if(!pollEvents())
                     {
                         break;
                     }
-
+#ifdef DEBUG_OUTPUTS
+                    std::cout << "End of Pollevents" << std::endl;
+#endif
                     if(!m_all_update())
                     {
                         break;
                     }
                     m_inputManager->m_all_update();
+#ifdef DEBUG_OUTPUTS
+                    std::cout << "Updating joystickManager" << std::endl;
+#endif
                     if(m_joystickManager)
                         m_joystickManager->update();
+#ifdef DEBUG_OUTPUTS
+                    std::cout << "Updated JoystickManager" << std::endl;
+#endif
 
                     if(!m_all_render())
                     {
@@ -270,6 +307,9 @@ namespace SDL
                     #ifdef MAX_FPS_LOCK
                 }
                 #endif
+#ifdef DEBUG_OUTPUTS
+                std::cout << "End of mainLoop" << std::endl;
+#endif
         }
     }
 
@@ -279,6 +319,9 @@ namespace SDL
         m_inputManager->setMouseWheel(0,0);
         while(SDL_PollEvent(&e))
         {
+#ifdef DEBUG_OUTPUTS
+        	std::cout << "Polling an event" << std::endl;
+#endif
             switch(e.type)
             {
                 case SDL_QUIT:
@@ -303,8 +346,14 @@ namespace SDL
                     break;
             }
 
+#ifdef DEBUG_OUTPUTS
+            std::cout << "Polling Joystickevents" << std::endl;
+#endif
             if(m_joystickManager)
                 m_joystickManager->pollEvents(e);
+#ifdef DEBUG_OUTPUTS
+            std::cout << "Polled Joystickevents" << std::endl;
+#endif
 
             if(!pollEvent(e))
             {
@@ -736,5 +785,34 @@ namespace SDL
     void MainClass::setBackgroundColor(const SDL_Color& col)
     {
     	m_backgroundColor = col;
+    }
+
+#ifndef _WIN32
+    void MainClass::activateAudio(bool init,const char* file)
+    {
+
+    	m_audioManager = cAudio::createAudioManager(init,file);
+
+    	if(!m_audioManager)
+    	{
+    		SDL::LogManager::log("Couldn't create AudioManager");
+    	}
+
+    }
+#endif
+
+    void MainClass::activateAudio(int fr,Uint16 fo,int cha,int chu)
+    {
+    	if(m_audioOpened)
+    		return;
+
+    	if(Mix_OpenAudio(fr,fo,cha,chu)<0)
+    	{
+    		LogManager::log(std::string("Error while opening Audio: ") + Mix_GetError());
+    	}
+    	else
+    	{
+    		m_audioOpened = true;
+    	}
     }
 }

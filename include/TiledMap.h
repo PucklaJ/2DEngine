@@ -41,6 +41,7 @@ namespace SDL
         void setRenderObjects(bool b) {m_renderObjects = b;}
         
         void destroyTile(int,int,int);
+        void setTile(int,int,int,int,int);
 
     private:
         int getIDofTileset(const Tmx::Tileset*);

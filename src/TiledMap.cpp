@@ -63,9 +63,6 @@ namespace SDL
             m_size.set(m_texture->getWidth(),m_texture->getHeight());
         }
         
-        delete m_tilesX;
-        m_tilesX = nullptr;
-        
         LogManager::log("Finished Loading Map!");
        
         return true;
@@ -175,8 +172,8 @@ namespace SDL
             
         for(int i = 0;i<GetNumTilesets();i++)
         {
-            const Tmx::Tileset* tileSet = GetTileset((int)i);
-            std::string imageFile = GetFilepath() + GetTileset(i)->GetImage()->GetSource();
+            const Tmx::Tileset* tileSet = GetTileset(i);
+            std::string imageFile = GetFilepath() + tileSet->GetImage()->GetSource();
             
             m_tilesX[i] = (tileSet->GetImage()->GetWidth()-tileSet->GetMargin()*2+tileSet->GetSpacing())/(tileSet->GetTileWidth()+tileSet->GetSpacing());
         }
@@ -489,8 +486,8 @@ namespace SDL
             else if(obj->GetPolygon())
             {
                 //std::cout << "+++++++++++++++ Polygon" << std::endl;
-                const Tmx::Polygon* polygon = obj->GetPolygon();
 #ifdef DRAW_DEBUG
+                const Tmx::Polygon* polygon = obj->GetPolygon();
                 SDL_Color color = {255,255,255,255};
                 //std::cout << "++++++++++++++++ Points" << std::endl;
                 
@@ -890,7 +887,7 @@ namespace SDL
     		{
     			it->second.curTime = 0;
     			it->second.curRect++;
-    			if(it->second.curRect == it->second.rects.size())
+    			if(it->second.curRect == (int)it->second.rects.size())
     				it->second.curRect = 0;
     		}
     	}
@@ -954,6 +951,9 @@ namespace SDL
             m_mainClass->getPhysics()->getWorld()->DestroyBody(m_bodies[i]);
         }
         m_bodies.clear();
+
+        delete[] m_tilesX;
+        m_tilesX = nullptr;
     }
 
     b2Body* TiledMap::toCollisionBody(const Tmx::Object* obj)
@@ -1000,6 +1000,90 @@ namespace SDL
     			m_animTiles.pop_back();
     			return;
     		}
+    	}
+    }
+
+    void TiledMap::setTile(int x,int y,int layer,int tileset,int id)
+    {
+    	destroyTile(x,y,layer);
+
+    	SDL_Rect srcRect;
+    	SDL_Rect dstRect;
+
+    	getSrcRectForTileID(&srcRect,m_tilesX[tileset],tileset,id);
+    	TextureHandle* tex = m_textures[layer];
+
+    	tex->setRenderTarget(m_mainClass->getRenderer());
+
+    	dstRect.x = x*GetTileWidth();
+    	dstRect.y = y*GetTileHeight();
+    	dstRect.w = GetTileWidth();
+    	dstRect.h = GetTileHeight();
+    	const Tmx::Tile* tile = GetTileset(tileset)->GetTile(id);
+
+    	if(!tile)
+    	{
+    		LogManager::log(std::string("Couldn't set Tile: ") + id);
+    		return;
+    	}
+
+    	TextureHandle* tileSetTex = m_mainClass->getResourceManager()->loadTexture(GetFilepath() + GetTileset(tileset)->GetImage()->GetSource());
+    	tileSetTex->renderCopy(m_mainClass->getRenderer(),&dstRect,&srcRect);
+
+    	bool isAnim = false;
+    	bool animLoaded = false;
+
+    	for(std::map<int,TileAnimation>::iterator it = m_animations.begin();it!=m_animations.end();it++)
+    	{
+    		if(it->first == id)
+    		{
+    			animLoaded = true;
+    			break;
+    		}
+    	}
+
+    	if(tile->GetFrameCount() > 0 && !animLoaded)
+    	{
+    		TileAnimation anim;
+    		anim.curRect = 0;
+    		anim.curTime = 0;
+    		anim.texture = tileSetTex;
+    		std::vector<SDL_Rect> rects;
+    		std::vector<int> times;
+    		for(size_t i = 0;i<tile->GetFrames().size();i++)
+    		{
+    			Tmx::AnimationFrame frame = tile->GetFrames()[i];
+    			times.push_back(frame.GetDuration());
+    			getSrcRectForTileID(&srcRect,m_tilesX[tileset],tileset,frame.GetTileID());
+    			rects.push_back(srcRect);
+    		}
+    		anim.rects = rects;
+    		anim.times = times;
+    		isAnim = true;
+    	}
+
+    	if(tile->GetFrameCount() > 0 || true)
+    	{
+			for(std::map<int,TileAnimation>::iterator it = m_animations.begin();it!=m_animations.end();it++)
+			{
+				if(it->first == id)
+				{
+					animLoaded = true;
+					break;
+				}
+			}
+    	}
+
+
+    	if(isAnim || animLoaded)
+    	{
+    		AnimationTile anim;
+    		anim.animID = id;
+    		anim.layer = layer;
+    		anim.x = x*GetTileWidth();
+    		anim.y = y*GetTileHeight();
+
+    		m_animTiles.push_back(anim);
     	}
     }
 }

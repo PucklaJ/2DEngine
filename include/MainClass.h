@@ -7,6 +7,7 @@
 #include <chrono>
 #include <SDL2_framerate.h>
 #include <SDL2/SDL_pixels.h>
+#include <SDL2/SDL_mixer.h>
 
 #define NO_FPS_LOCK -1
 
@@ -16,6 +17,13 @@ class SDL_Window;
 class SDL_Renderer;
 class SDL_Texture;
 class SDL_Rect;
+
+#ifndef _WIN32
+namespace cAudio
+{
+	class IAudioManager;
+}
+#endif
 
 
 namespace SDL
@@ -49,6 +57,10 @@ namespace SDL
             SDL_Renderer* getRenderer() {return m_renderer;}
             WindowHandle* getWindow() {return m_window;}
             SDL_Texture* getBackBuffer() {return m_backBuffer;}
+            JoystickManager* getJoystickManager() {return m_joystickManager;}
+#ifndef _WIN32
+            cAudio::IAudioManager* getAudioManager() {return m_audioManager;}
+#endif
             Camera* getCamera();
             int getMaxFPS() {return m_maxFPS;}
             Physics* getPhysics();
@@ -66,7 +78,10 @@ namespace SDL
             const SDL_Color& getBackgroundColor() const {return m_backgroundColor;}
 
             void activatePhysics(const Vector2& gravity = Vector2(0.0,-10.0),const Vector2& worldSize = Vector2(NORM_W,NORM_H));
-            
+#ifndef _WIN32
+            void activateAudio(bool initializeDefault,const char* IFilePath);
+#endif
+            void activateAudio(int frequency = 44100,Uint16 format = MIX_DEFAULT_FORMAT,int channels = 2,int chunksize = 2048);
             
             
             virtual bool m_render() override;
@@ -91,6 +106,9 @@ namespace SDL
             Physics* m_physics = nullptr;
             Camera* m_camera = nullptr;
             JoystickManager* m_joystickManager = nullptr;
+#ifndef _WIN32
+            cAudio::IAudioManager* m_audioManager = nullptr;
+#endif
 
             double m_timeScale = 1.0;
             bool m_scaleToResolution = true;
@@ -155,6 +173,7 @@ namespace SDL
             Vector2 m_nativeResolution;
             ContactListener* m_contactListener;
 
+            bool m_audioOpened = false;
     };
 }
 

@@ -40,6 +40,7 @@ namespace SDL
             
             bool intersects(Sprite*);
             bool intersects(const Vector2&);
+            bool intersects(const Vector2&,const Vector2&);
             
             bool isOnScreen() override;
         protected:

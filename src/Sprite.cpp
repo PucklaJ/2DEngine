@@ -274,6 +274,19 @@ namespace SDL
         return false;
     }
     
+    bool Sprite::intersects(const Vector2& pos,const Vector2& size)
+    {
+    	 if(m_position.getX() + m_size.getX() > pos.getX() &&
+    	    m_position.getX() < pos.getX() + size.getX() &&
+		    m_position.getY() + m_size.getY() > pos.getY() &&
+		    m_position.getY() < pos.getY() + size.getY())
+		 {
+		   return true;
+		 }
+
+		return false;
+    }
+
     bool Sprite::isOnScreen()
     {
         if(m_rotation == 0.0 || !((int)m_rotation % 360))

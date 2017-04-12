@@ -63,13 +63,39 @@ namespace SDL
 
     }
 
+    bool doubleEqual(double d1,double d2)
+    {
+    	if(d1 == d2 || ((d2 + 0.0001 > d1) && (d2 - 0.0001 < d1)))
+    		return true;
+    	else
+    		return false;
+    }
+
+    bool doubleGreaterOrEqual(double d1,double d2)
+    {
+    	if(d1 > d2 || doubleEqual(d1,d2))
+    		return true;
+    	return false;
+    }
+
+    bool doubleSmallerOrEqual(double d1,double d2)
+	{
+		if(d1 < d2 || doubleEqual(d1,d2))
+			return true;
+		return false;
+	}
+
+#define dgoe(d1,d2) doubleGreaterOrEqual(d1,d2)
+#define dsoe(d1,d2) doubleSmallerOrEqual(d1,d2)
+
     bool PositionTween::update()
     {
         m_parent->addPosition(m_vel*m_parent->getMainClass()->getDeltaTimeInSeconds());
-        if(((m_vel.getX() < 0 && m_parent->getPosition().getX() <= m_dstPos.getX()) ||
-            (m_vel.getX() >= 0 && m_parent->getPosition().getX() >= m_dstPos.getX()))&&
-           ((m_vel.getY() < 0 && m_parent->getPosition().getY() <= m_dstPos.getY())||
-            (m_vel.getY() >= 0 && m_parent->getPosition().getY() >= m_dstPos.getY())))
+
+        if(((m_vel.getX() < 0 && dsoe(m_parent->getPosition().getX(),m_dstPos.getX())) ||
+            (m_vel.getX() >= 0 && dgoe(m_parent->getPosition().getX(),m_dstPos.getX())))&&
+           ((m_vel.getY() < 0 && dsoe(m_parent->getPosition().getY(),m_dstPos.getY()))||
+            (m_vel.getY() >= 0 && dgoe(m_parent->getPosition().getY(),m_dstPos.getY()))))
         {
             m_parent->setPosition(m_dstPos);
             return true;
@@ -80,8 +106,26 @@ namespace SDL
 
     void PositionTween::init()
     {
-        m_vel.setX((m_dstPos.getX() - m_parent->getPosition().getX())/m_time);
-        m_vel.setY((m_dstPos.getY() - m_parent->getPosition().getY())/m_time);
+        m_vel.setX((m_dstPos.getX() - m_parent->getPosition().getX() == 0.0 ? 0.0 : ((m_dstPos.getX() - m_parent->getPosition().getX())/m_time)));
+        m_vel.setY((m_dstPos.getY() - m_parent->getPosition().getY() == 0.0 ? 0.0 : ((m_dstPos.getY() - m_parent->getPosition().getY())/m_time)));
+
+        if(abs(m_vel.getX()) < 0.0001)
+        {
+        	m_vel.setX(0.0);
+        }
+        if(abs(m_vel.getY()) < 0.0001)
+        {
+        	m_vel.setY(0.0);
+        }
+
+        if(m_vel.getX() == 0.0)
+        {
+        	m_parent->setPosition(m_dstPos.getX(),m_parent->getPosition().getY());
+        }
+        if(m_vel.getY() == 0.0)
+        {
+        	m_parent->setPosition(m_parent->getPosition().getX(),m_dstPos.getY());
+        }
     }
     
     AnimationTween::AnimationTween(TextureHandle* atlas,int x, int y,double time,bool loop,bool customTime) : Tween(time),
