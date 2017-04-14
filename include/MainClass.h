@@ -82,7 +82,7 @@ namespace SDL
             void activateAudio(bool initializeDefault,const char* IFilePath);
 #endif
             void activateAudio(int frequency = 44100,Uint16 format = MIX_DEFAULT_FORMAT,int channels = 2,int chunksize = 2048);
-            
+            void activateJoystick();
             
             virtual bool m_render() override;
             virtual bool render() override;
@@ -97,7 +97,6 @@ namespace SDL
             virtual bool init() = 0;
             virtual bool pollEvents();
             virtual bool pollEvent(const SDL_Event& e);
-            void activateJoystick();
 
             int m_maxFPS = 60;
             InputManager* m_inputManager = nullptr;

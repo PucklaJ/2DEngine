@@ -576,6 +576,7 @@ namespace SDL
     {
         m_priority = order;
         reorderChildren();
+        m_parent->m_needsChildReorder = true;
     }
 
     void Actor::reorderChildren()

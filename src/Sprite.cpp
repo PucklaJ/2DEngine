@@ -203,11 +203,17 @@ namespace SDL
         {
             if(m_flip == SDL_FLIP_NONE &&  (m_rotation == 0.0 || !((int)m_rotation % 360)))
             {
-                m_texture->renderCopy(m_renderer,&m_dstRect,&m_srcRect);
+                if(m_texture->renderCopy(m_renderer,&m_dstRect,&m_srcRect)<0)
+                {
+                	LogManager::log(std::string("Render Error: ") + SDL_GetError());
+                }
             }
             else
             {
-                m_texture->renderCopyEx(m_renderer,m_rotation,&m_dstRect,&m_srcRect,nullptr,m_flip);
+                if(m_texture->renderCopyEx(m_renderer,m_rotation,&m_dstRect,&m_srcRect,nullptr,m_flip)<0)
+                {
+                	LogManager::log(std::string("Render Error: ") + SDL_GetError());
+                }
             }
         }
         

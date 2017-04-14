@@ -142,6 +142,44 @@ namespace SDL
         return v;
     }
     
+    double Vector2::angle()
+    {
+    	if(m_x > 0.0 && m_y < 0.0) // I
+    	{
+    		return asin(-m_y/length());
+    	}
+    	else if(m_x < 0.0 && m_y < 0.0) // II
+    	{
+    		return MATH_PI - asin(-m_y/length());
+    	}
+    	else if(m_x < 0.0 && m_y > 0.0) // III
+    	{
+    		return MATH_PI - asin(-m_y/length());
+    	}
+    	else if(m_x > 0.0 && m_y > 0.0) // IV
+    	{
+    		return asin(-m_y/length()) + MATH_PI*2.0;
+    	}
+    	else if(m_x == 0.0 && m_y < 0.0)
+    	{
+    		return MATH_PI/2.0;
+    	}
+    	else if(m_x == 0.0 && m_y > 0.0)
+    	{
+    		return MATH_PI*3.0/2.0;
+    	}
+    	else if(m_x > 0.0 && m_y == 0.0)
+    	{
+    		return 0.0;
+    	}
+    	else if(m_x < 0.0 && m_y == 0.0)
+    	{
+    		return MATH_PI;
+    	}
+
+    	return 0.0;
+    }
+
 #ifndef __APPLE__
     const Vector2 operator/(const Vector2& v,double d)
     {

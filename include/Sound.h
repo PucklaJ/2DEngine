@@ -1,7 +1,7 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-#ifndef _APPLE_
+#ifndef __APPLE__
 #include <SDL2/SDL_mixer.h>
 #else
 #include <SDL2_mixer/SDL_mixer.h>

@@ -26,6 +26,7 @@ namespace SDL
         
         const Vector2& normalise();
         static double distance(const Vector2&,const Vector2&,bool sqrd = false);
+        double angle();
         
         bool isOnScreen(MainClass* c = nullptr);
 
